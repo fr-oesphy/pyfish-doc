@@ -1701,55 +1701,7 @@ python verify_install.py</pre>
                         </div>
                     </div>
                 </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">Metadata format decision</div>
-                    <h2>Why PyFish uses pyfish.json instead of TOML</h2>
-                    <div class="decision-note">
-                        <h3>Decision: keep <span class="inline-code">pyfish.json</span></h3>
-                        <p>
-                            TOML is a good configuration language, but JSON is the better manifest format for PyFish.
-                            The file is small and machine-validated, so TOML's comments and table syntax would add less
-                            value than JSON's strictness and universal tooling.
-                        </p>
-                    </div>
-                    <div class="two-up" style="margin-top: 22px;">
-                        <article class="card">
-                            <div class="card-eyebrow">Strict before execution</div>
-                            <h3>Predictable validation</h3>
-                            <p>JSON has a compact, unambiguous data model. PyFish can reject invalid metadata before
-                                loading any Python code.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">No extra parser</div>
-                            <h3>Smaller runtime surface</h3>
-                            <p>The runtime already includes reliable JSON support. TOML would add another parser and
-                                another compatibility surface for a very small file.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Editor support</div>
-                            <h3>Easy schema tooling</h3>
-                            <p>Editors can validate and autocomplete JSON manifests with a JSON Schema. Build tools,
-                                launchers, and websites can also read the format easily.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Why not TOML?</div>
-                            <h3>Its strengths are not needed here</h3>
-                            <p>TOML is more pleasant for long hand-written configuration with comments and nested
-                                tables. A PyFish manifest has only a few stable fields, so those benefits do not
-                                outweigh a second format dependency.</p>
-                        </article>
-                    </div>
-                    <div class="decision-note" style="margin-top: 22px;">
-                        <h3>Manifest and configuration are different jobs</h3>
-                        <p>
-                            Keep identity and distribution metadata in <span class="inline-code">pyfish.json</span>.
-                            If your mod later needs a large, user-edited settings file with comments, that separate
-                            configuration file can use TOML without changing the manifest format.
-                        </p>
-                    </div>
-                </section>
-
+                
                 <section class="section">
                     <div class="section-eyebrow">Entrypoint</div>
                     <h2>Register content and events normally</h2>
