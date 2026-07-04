@@ -89,12 +89,10 @@
                 <li><a href="#events" data-nav-view="events">Event System</a></li>
             </ul>
 
-            <div class="nav-title">Tooling</div>
+            <div class="nav-title">Resources</div>
             <ul class="nav-list">
                 <li><a href="#ide-support" data-nav-view="ide-support">IDE Support</a></li>
-                <li><a href="#validation" data-nav-view="validation">Validation Pack</a></li>
                 <li><a href="#libraries" data-nav-view="libraries">Native Libraries</a></li>
-                <li><a href="#builds" data-nav-view="builds">Build Outputs</a></li>
             </ul>
         </aside>
 
@@ -128,9 +126,8 @@
                             <div class="stat-label">Installable jar</div>
                             <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.0.jar
                             </div>
-                            <p><span class="inline-code"
-                                    data-loader-field="jarPath">build/profiles/mc1211/neoforge/libs/pyfish-neoforge-1.21.1-1.2.0.jar</span>
-                            </p>
+                            <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
+                                    rel="noopener">Download the selected version from Modrinth</a>.</p>
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Event bridge</div>
@@ -187,8 +184,8 @@
                             <span>Loader setup, deployment modes, and server policy.</span>
                         </a>
                         <a class="quick-link" href="#scripts" data-view-link="scripts">
-                            <strong>External Scripts</strong>
-                            <span>Folder layout, logical Python mods, and dependency placement.</span>
+                            <strong>External Scripts (Python for modpacks)</strong>
+                            <span>No limits, like for mods !</span>
                         </a>
                         <a class="quick-link" href="#template" data-view-link="template">
                             <strong>Creating Mods</strong>
@@ -217,10 +214,6 @@
                         <a class="quick-link" href="#libraries" data-view-link="libraries">
                             <strong>Native Libraries</strong>
                             <span>Bundled Java-backed modules with official upstream documentation links.</span>
-                        </a>
-                        <a class="quick-link" href="#validation" data-view-link="validation">
-                            <strong>Validation Pack</strong>
-                            <span>Ready-to-copy script plus an in-game checklist for full feature validation.</span>
                         </a>
                         <a class="quick-link" href="#ide-support" data-view-link="ide-support">
                             <strong>IDE Support</strong>
@@ -259,9 +252,8 @@
                             <div class="stat-label">Install this jar</div>
                             <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.0.jar
                             </div>
-                            <p><span class="inline-code"
-                                    data-loader-field="jarPath">build/profiles/mc1211/neoforge/libs/pyfish-neoforge-1.21.1-1.2.0.jar</span>
-                            </p>
+                            <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
+                                    rel="noopener">Open the official download page</a>.</p>
                         </article>
                     </div>
                 </section>
@@ -270,10 +262,9 @@
                     <div class="section-eyebrow">Loader-specific setup</div>
                     <h2>How to install PyFish</h2>
                     <p class="section-intro">
-                        Only the matching loader jar should be installed. Development artifacts such as
-                        <span class="inline-code">dev</span>, <span class="inline-code">dev-shadow</span>,
-                        <span class="inline-code">sources</span>, or <span class="inline-code">javadoc</span> are not
-                        meant to be dropped into a normal instance.
+                        Download the PyFish jar matching both your loader and Minecraft version, then place it
+                        in the normal <span class="inline-code">mods/</span> folder. Do not mix a Fabric jar with
+                        NeoForge or install a jar made for another Minecraft version.
                     </p>
 
                     <div class="two-up">
@@ -393,20 +384,18 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                     <div class="section-eyebrow">Folder layout</div>
                     <h2>How external scripts are organized</h2>
                     <p class="section-intro">
-                        PyFish scans the root <span class="inline-code">pyfish/</span> folder, then treats each
-                        subfolder as a logical Python mod if it contains a <span class="inline-code">scripts/</span>
-                        directory. Packaged Python-only mods can be dropped into
-                        <span class="inline-code">pyfish/mods/</span> as single <span class="inline-code">.pyz</span>
-                        files.
+                        PyFish scans scripts from the root <span class="inline-code">pyfish/</span> folder.
+                        Packaged Python-only mods use the normal Minecraft <span class="inline-code">mods/</span>
+                        folder, right next to PyFish and the other mod JARs.
                     </p>
 
                     <div class="code-shell">
                         <pre>.minecraft/
 |-- mods/
+|   |-- pyfish-neoforge-1.21.11-1.2.0.jar
+|   `-- packaged_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
-    |-- mods/
-    |   `-- packaged_mod-1.0.0.pyz
     |-- scripts/
     |   `-- global_fix.py
     `-- my_mod/
@@ -439,7 +428,7 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Single-file Python mods</div>
-                            <h3><span class="inline-code">pyfish/mods/*.pyz</span></h3>
+                            <h3><span class="inline-code">mods/*.pyz</span></h3>
                             <p>A Python zipapp packages the manifest, entrypoint, optional dependencies, and internal
                                 modules into one distributable file. The same archive works on Fabric and NeoForge.</p>
                         </article>
@@ -457,9 +446,9 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Packaged zipapps</div>
-                            <p>Files in <span class="inline-code">pyfish/mods/</span> are validated before execution.
-                                Their manifest id becomes the content namespace and their
-                                <span class="inline-code">requirements.txt</span> stays isolated under that id.</p>
+                            <p>Files ending in <span class="inline-code">.pyz</span> inside the normal
+                                <span class="inline-code">mods/</span> folder are validated before execution. Their
+                                manifest id becomes the content namespace and dependencies stay isolated under it.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">External overrides</div>
@@ -524,7 +513,7 @@ mc.on("on_player_join", on_player_join)</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Smoke test flow</div>
+                    <div class="section-eyebrow">First script flow</div>
                     <h2>What success looks like</h2>
                     <div class="cards">
                         <article class="card">
@@ -1005,7 +994,7 @@ items.register_item("signal_wand", {
                         </article>
                         <article class="method-card" data-detail-card>
                             <div class="method-card-header"><div class="method-name">mc.set_block(world: WorldHandle, x: int, y: int, z: int, block_id: str)</div><span class="pill pill-green">Shared</span></div>
-                            <p>Places or replaces a block. This is one of the fastest smoke tests for the shared runtime bridge.</p>
+                            <p>Places or replaces a block. This is one of the fastest visible checks for the shared runtime bridge.</p>
                             <a class="doc-link method-deep-link" href="#detail-mc-set-block" data-detail-link="mc-set-block">Open full page</a>
                         </article>
                         <article class="method-card" data-detail-card>
@@ -1265,123 +1254,6 @@ mc.on("on_player_join", on_player_join)</pre>
                 </section>
             </section>
 
-            <section class="doc-view" data-doc-view="validation" hidden>
-                <header class="hero">
-                    <div class="hero-brand">
-                        <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
-                            alt="PyFish logo">
-                        <div class="hero-title">
-                            <h1>Validation Pack</h1>
-                            <p class="hero-subtitle">
-                                This view documents the ready-to-copy validation pack that now ships in the repository.
-                                It is meant to test the shared runtime, the integrated dynamic content workflow, the
-                                shared event bridge, and the bundled native helper modules from inside a real world.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div data-loader-switch></div>
-                </header>
-
-                <section class="section">
-                    <div class="cards">
-                        <article class="stat-card">
-                            <div class="stat-label">Script to copy</div>
-                            <div class="stat-value">full_validation.py</div>
-                            <p><span class="inline-code">documentation/validation_pack/pyfish/qa/scripts/full_validation.py</span></p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">Checklist</div>
-                            <div class="stat-value">Validation checklist</div>
-                            <p><span class="inline-code">documentation/VALIDATION_CHECKLIST.md</span></p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">Namespace tested</div>
-                            <div class="stat-value">qa:*</div>
-                            <p>The pack is intentionally installed as a logical Python mod so namespace resolution is tested too.</p>
-                        </article>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">Install it</div>
-                    <h2>Copy the packaged test mod</h2>
-                    <p class="section-intro">
-                        Copy the bundled <span class="inline-code">pyfish/</span> tree into the root of the instance or
-                        server. The final runtime path should be
-                        <span class="inline-code">pyfish/qa/scripts/full_validation.py</span>.
-                    </p>
-
-                    <div class="code-shell">
-                        <pre>documentation/
-`-- validation_pack/
-    `-- pyfish/
-        `-- qa/
-            `-- scripts/
-                `-- full_validation.py</pre>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">What it covers</div>
-                    <h2>Validation scope</h2>
-                    <div class="cards">
-                        <article class="card">
-                            <div class="card-eyebrow">Runtime</div>
-                            <p>Shared <span class="inline-code">mc</span> helpers such as block placement, item giving, effects, entity spawn, commands, particles, sounds, time control, teleportation, and cleanup.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Content API</div>
-                            <p>Items, food, tools, multitools, blocks, recipes, tags, textures, creative tabs, and dynamic content callbacks available from Python.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Native helpers</div>
-                            <p>It performs smoke tests for <span class="inline-code">java_uuid</span>, <span class="inline-code">java_pathlib</span>, <span class="inline-code">java_sqlite3</span>, <span class="inline-code">java_asyncio</span>, <span class="inline-code">java_multiprocessing</span>, and <span class="inline-code">java_pillow</span>.</p>
-                        </article>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">In-game commands</div>
-                    <h2>Interactive validation commands</h2>
-                    <p class="section-intro">
-                        The script also registers chat commands so one world session can exercise nearly the full shared
-                        API surface.
-                    </p>
-
-                    <div class="two-up">
-                        <article class="callout">
-                            <div class="card-eyebrow">Core commands</div>
-                            <ul class="detail-list">
-                                <li><span class="inline-code">!pyfish help</span>, <span class="inline-code">!pyfish status</span>, <span class="inline-code">!pyfish libs</span></li>
-                                <li><span class="inline-code">!pyfish block</span>, <span class="inline-code">!pyfish break</span>, <span class="inline-code">!pyfish bee</span>, <span class="inline-code">!pyfish scan</span>, <span class="inline-code">!pyfish cleanup</span></li>
-                                <li><span class="inline-code">!pyfish particle</span>, <span class="inline-code">!pyfish sound</span>, <span class="inline-code">!pyfish command</span></li>
-                                <li><span class="inline-code">!pyfish day</span>, <span class="inline-code">!pyfish night</span>, <span class="inline-code">!pyfish hop</span>, <span class="inline-code">!pyfish lightning</span>, <span class="inline-code">!pyfish boom</span></li>
-                            </ul>
-                        </article>
-                        <article class="callout">
-                            <div class="card-eyebrow">Optional environment-dependent commands</div>
-                            <ul class="detail-list">
-                                <li><span class="inline-code">!pyfish requests</span> for a live HTTP request</li>
-                                <li><span class="inline-code">!pyfish subprocess</span> for a local process launch</li>
-                                <li><span class="inline-code">!pyfish clipboard</span> for desktop clipboard access</li>
-                            </ul>
-                        </article>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">Checklist</div>
-                    <h2>Use the markdown checklist for the final pass</h2>
-                    <p class="section-intro">
-                        The HTML view explains the pack, but the detailed step-by-step pass list lives in
-                        <span class="inline-code">documentation/VALIDATION_CHECKLIST.md</span>. Use that file while
-                        testing real worlds, because it is easier to check off loader-specific or environment-specific
-                        cases there.
-                    </p>
-                </section>
-            </section>
-
             <section class="doc-view" data-doc-view="ide-support" hidden>
                 <header class="hero">
                     <div class="hero-brand">
@@ -1405,7 +1277,9 @@ mc.on("on_player_join", on_player_join)</pre>
                         <article class="stat-card">
                             <div class="stat-label">Zip workflow</div>
                             <div class="stat-value">Download, Extract, install, verify</div>
-                            <p>The zip is available to download on the discord. Extract <span class="inline-code">ide_support.zip</span>, run the installer bat, then run <span class="inline-code">python verify_install.py</span>.</p>
+                            <p>Download the ZIP below, extract it, run
+                                <span class="inline-code">install_editable.bat</span>, then run
+                                <span class="inline-code">python verify_install.py</span>.</p>
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Windows helper</div>
@@ -1423,9 +1297,15 @@ mc.on("on_player_join", on_player_join)</pre>
                 <section class="section">
                     <div class="section-eyebrow">Quick install</div>
                     <h2>Simple zip-friendly installation flow</h2>
+                    <div class="quick-links" style="margin-bottom: 18px;">
+                        <a class="quick-link" href="ide_support.zip" download>
+                            <strong>Download ide_support.zip</strong>
+                            <span>Autocomplete, type hints, hover documentation, and installation helpers.</span>
+                        </a>
+                    </div>
                     <div class="code-shell">
-                        <pre>1. Download ide_support.zip on the discord
-2. Extract ide_support.zip
+                        <pre>1. Download ide_support.zip
+2. Extract the ZIP
 3. Open the extracted ide_support folder
 4. Double-click install_editable.bat
 5. Run: python verify_install.py
@@ -1614,82 +1494,6 @@ python verify_install.py</pre>
                 </section>
             </section>
 
-            <section class="doc-view" data-doc-view="builds" hidden>
-                <header class="hero">
-                    <div class="hero-brand">
-                        <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
-                            alt="PyFish logo">
-                        <div class="hero-title">
-                            <h1>Build Outputs</h1>
-                            <p class="hero-subtitle">
-                                PyFish now builds one loader jar per platform. This view covers which artifacts are
-                                meant to be installed and which ones are development-only.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div data-loader-switch></div>
-                </header>
-
-                <section class="section">
-                    <div class="cards">
-                        <article class="stat-card">
-                            <div class="stat-label">Selected loader jar</div>
-                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.0.jar
-                            </div>
-                            <p><span class="inline-code"
-                                    data-loader-field="jarPath">build/profiles/mc1211/neoforge/libs/pyfish-neoforge-1.21.1-1.2.0.jar</span>
-                            </p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">Fabric jar</div>
-                            <div class="stat-value" data-loader-field="jarName" data-loader-source="fabric">
-                                pyfish-fabric-1.21.1-1.2.0.jar</div>
-                            <p><span class="inline-code" data-loader-field="jarPath"
-                                    data-loader-source="fabric">build/profiles/mc1211/fabric/libs/pyfish-fabric-1.21.1-1.2.0.jar</span>
-                            </p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">NeoForge jar</div>
-                            <div class="stat-value" data-loader-field="jarName" data-loader-source="neoforge">
-                                pyfish-neoforge-1.21.1-1.2.0.jar</div>
-                            <p><span class="inline-code" data-loader-field="jarPath"
-                                    data-loader-source="neoforge">build/profiles/mc1211/neoforge/libs/pyfish-neoforge-1.21.1-1.2.0.jar</span>
-                            </p>
-                        </article>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="cards">
-                        <article class="card">
-                            <div class="card-eyebrow">Install these</div>
-                            <ul class="detail-list">
-                                <li><span class="inline-code">pyfish-fabric-...jar</span></li>
-                                <li><span class="inline-code">pyfish-neoforge-...jar</span></li>
-                            </ul>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Do not install these</div>
-                            <ul class="detail-list">
-                                <li><span class="inline-code">dev</span></li>
-                                <li><span class="inline-code">dev-shadow</span></li>
-                                <li><span class="inline-code">sources</span></li>
-                                <li><span class="inline-code">javadoc</span></li>
-                            </ul>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Build commands</div>
-                            <ul class="detail-list">
-                                <li><span class="inline-code">.\gradlew.bat build</span></li>
-                                <li><span class="inline-code">.\gradlew.bat :fabric:build</span></li>
-                                <li><span class="inline-code">.\gradlew.bat :neoforge:build</span></li>
-                            </ul>
-                        </article>
-                    </div>
-                </section>
-            </section>
-
             <section class="doc-view" data-doc-view="template" hidden>
                 <header class="hero">
                     <div class="hero-brand">
@@ -1719,7 +1523,8 @@ python verify_install.py</pre>
                                 <li>Best for mods written entirely with the PyFish Python API.</li>
                                 <li>One archive works on Fabric and NeoForge; the script still needs to respect the
                                     selected Minecraft version's documented API surface.</li>
-                                <li>Install it in <span class="inline-code">pyfish/mods/</span>.</li>
+                                <li>Install it beside the PyFish JAR in the normal
+                                    <span class="inline-code">mods/</span> folder.</li>
                                 <li>Requires the normal PyFish jar on every side where the code must run.</li>
                             </ul>
                         </article>
@@ -1729,10 +1534,25 @@ python verify_install.py</pre>
                             <ul class="detail-list">
                                 <li>Best when the project must appear as a native loader mod with loader metadata.</li>
                                 <li>Can bundle Python scripts under <span class="inline-code">pyfish/&lt;mod_id&gt;/</span>.</li>
-                                <li>Uses <span class="inline-code">documentation/pyfish_mod_template/</span>.</li>
+                                <li>Download the JAR template below and build one output for each loader.</li>
                                 <li>Must be built for the targeted loader and Minecraft profile.</li>
                             </ul>
                         </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Start a project</div>
+                    <h2>Download the format you need</h2>
+                    <div class="quick-links">
+                        <a class="quick-link" href="pyfish_pyz_template.zip" download>
+                            <strong>Download the .pyz template</strong>
+                            <span>Recommended: one Python-only mod file that works with Fabric and NeoForge.</span>
+                        </a>
+                        <a class="quick-link" href="pyfish_mod_template.zip" download>
+                            <strong>Download the JAR mod template</strong>
+                            <span>Creates separate Fabric and NeoForge JARs with native loader metadata.</span>
+                        </a>
                     </div>
                 </section>
 
@@ -1856,34 +1676,53 @@ log_print(f"Loaded {PYFISH_MOD_NAME} {PYFISH_MOD_VERSION}")</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Build and install</div>
-                    <h2>Use the included template</h2>
+                    <div class="section-eyebrow">Build a .pyz</div>
+                    <h2>From downloaded template to installed mod</h2>
                     <p class="section-intro">
-                        Copy <span class="inline-code">documentation/pyfish_pyz_template/</span>, edit its
-                        <span class="inline-code">src/</span> files, then run the builder with any normal Python 3.10+
-                        installation. Building the archive does not require Minecraft, Gradle, Fabric, or NeoForge.
+                        A <span class="inline-code">.pyz</span> is generated for you. You do not need to create a ZIP
+                        manually and you do not need Gradle, Fabric development tools, or NeoForge development tools.
+                        A normal Python 3.10+ installation is enough.
                     </p>
 
                     <div class="two-up">
                         <article class="callout">
-                            <div class="card-eyebrow">Build</div>
+                            <div class="card-eyebrow">1. Prepare the project</div>
+                            <ol class="detail-list">
+                                <li>Download and extract <span class="inline-code">pyfish_pyz_template.zip</span>.</li>
+                                <li>Edit <span class="inline-code">src/pyfish.json</span> with your id, name, version,
+                                    authors, and description.</li>
+                                <li>Write your mod in <span class="inline-code">src/__main__.py</span>.</li>
+                                <li>Add modules or a package inside <span class="inline-code">src/</span> if the mod
+                                    grows beyond one file.</li>
+                            </ol>
+                        </article>
+                        <article class="callout">
+                            <div class="card-eyebrow">2. Generate the file</div>
                             <div class="code-shell" style="margin-top: 12px;">
-                                <pre>cd documentation/pyfish_pyz_template
+                                <pre>py -3 build.py
+
+# Or on systems where Python uses this command:
 python build.py</pre>
                             </div>
-                            <p>The result is written to
+                            <p>The builder creates
                                 <span class="inline-code">dist/&lt;mod_id&gt;-&lt;version&gt;.pyz</span>.</p>
                         </article>
                         <article class="callout">
-                            <div class="card-eyebrow">Install</div>
+                            <div class="card-eyebrow">3. Install and test</div>
                             <div class="code-shell" style="margin-top: 12px;">
                                 <pre>.minecraft/
-|-- pyfish/
-    |-- mods/
-        |-- example_pyz_mod-1.0.0.pyz</pre>
+`-- mods/
+    |-- pyfish-fabric-1.21.1-1.2.0.jar
+    `-- example_pyz_mod-1.0.0.pyz</pre>
                             </div>
-                            <p>PyFish creates <span class="inline-code">pyfish/mods/</span> automatically.
-                                Archives directly inside <span class="inline-code">pyfish/</span> are also accepted.</p>
+                            <p>Move the generated <span class="inline-code">.pyz</span> into the same
+                                <span class="inline-code">mods/</span> folder as PyFish, then start Minecraft.</p>
+                        </article>
+                        <article class="callout">
+                            <div class="card-eyebrow">4. Distribute</div>
+                            <p>Share the generated <span class="inline-code">.pyz</span>. Users install the normal
+                                PyFish JAR for their loader and place your archive in their
+                                <span class="inline-code">mods/</span> folder. The same archive works on both loaders.</p>
                         </article>
                     </div>
                 </section>
@@ -1913,8 +1752,74 @@ python build.py</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Validation and trust</div>
-                    <h2>Failure behavior is explicit</h2>
+                    <div class="section-eyebrow">Choose the installation side</div>
+                    <h2>Server logic or synchronized content</h2>
+                    <div class="cards">
+                        <article class="card">
+                            <div class="card-eyebrow">Server-only logic</div>
+                            <p>Event handlers, commands, automation, and server rules can run only on the server when
+                                they do not register content required by clients.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Client-only logic</div>
+                            <p>Local helpers can run only on the client when they do not change server gameplay or
+                                synchronized registries.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Custom content</div>
+                            <p>Install PyFish and the same mod on the server and every client when it registers items,
+                                blocks, creative tabs, textures, or other synchronized content.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Choose the installation side</div>
+                    <h2>Server logic or synchronized content</h2>
+                    <div class="cards">
+                        <article class="card">
+                            <div class="card-eyebrow">Server-only logic</div>
+                            <p>Event handlers, commands, automation, and server rules can run only on the server when
+                                they do not register content required by clients.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Client-only logic</div>
+                            <p>Local helpers can run only on the client when they do not change server gameplay or
+                                synchronized registries.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Custom content</div>
+                            <p>Install PyFish and the same mod on the server and every client when it registers items,
+                                blocks, creative tabs, textures, or other synchronized content.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Choose the installation side</div>
+                    <h2>Server logic or synchronized content</h2>
+                    <div class="cards">
+                        <article class="card">
+                            <div class="card-eyebrow">Server-only logic</div>
+                            <p>Event handlers, commands, automation, and server rules can run only on the server when
+                                they do not register content required by clients.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Client-only logic</div>
+                            <p>Local helpers can run only on the client when they do not change server gameplay or
+                                synchronized registries.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Custom content</div>
+                            <p>Install PyFish and the same mod on the server and every client when it registers items,
+                                blocks, creative tabs, textures, or other synchronized content.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Safety and troubleshooting</div>
+                    <h2>Invalid archives fail clearly</h2>
                     <ul class="detail-list">
                         <li>An archive missing <span class="inline-code">pyfish.json</span> or
                             <span class="inline-code">__main__.py</span> is rejected before execution.</li>
@@ -1929,13 +1834,39 @@ python build.py</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Native loader template</div>
-                    <h2>When to use the JAR template</h2>
+                    <div class="section-eyebrow">Normal loader mod</div>
+                    <h2>Build Fabric and NeoForge JARs</h2>
                     <p class="section-intro">
-                        Use <span class="inline-code">documentation/pyfish_mod_template/</span> when the project must
-                        be distributed as a normal Fabric or NeoForge mod, needs native loader metadata, or may later
-                        add Java code. Scripts bundled by that template inherit the real loader mod id automatically.
+                        Use this format when your project must appear as a normal loader mod or another mod needs to
+                        depend on it. The template contains native Fabric and NeoForge metadata while your gameplay
+                        code remains Python.
                     </p>
+                    <div class="quick-links" style="margin-bottom: 18px;">
+                        <a class="quick-link" href="pyfish_mod_template.zip" download>
+                            <strong>Download pyfish_mod_template.zip</strong>
+                            <span>A clean multi-loader project with Gradle wrapper and an example typed script.</span>
+                        </a>
+                    </div>
+                    <div class="two-up">
+                        <article class="callout">
+                            <div class="card-eyebrow">Configure</div>
+                            <ol class="detail-list">
+                                <li>Edit <span class="inline-code">gradle.properties</span>.</li>
+                                <li>Rename <span class="inline-code">src/main/resources/pyfish/template_mod/</span>
+                                    to use the exact same id as <span class="inline-code">mod_id</span>.</li>
+                                <li>Write scripts inside its <span class="inline-code">scripts/</span> folder.</li>
+                            </ol>
+                        </article>
+                        <article class="callout">
+                            <div class="card-eyebrow">Build</div>
+                            <div class="code-shell" style="margin-top: 12px;">
+                                <pre>gradlew.bat build</pre>
+                            </div>
+                            <p>Install the matching file from <span class="inline-code">build/libs/</span>:
+                                one ends in <span class="inline-code">-fabric-...</span> and the other in
+                                <span class="inline-code">-neoforge-...</span>.</p>
+                        </article>
+                    </div>
                 </section>
             </section>
 

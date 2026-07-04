@@ -202,9 +202,7 @@ const PYFISH_DOC_VIEWS = {
     "api-detail": "API Detail",
     events: "Event System",
     "ide-support": "IDE Support",
-    validation: "Validation Pack",
     libraries: "Native Libraries",
-    builds: "Build Outputs",
     template: "Mod Template"
 };
 
@@ -260,7 +258,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Additional item properties such as texture, tab, or food callbacks like <span class=\"inline-code\">eat</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import items\n\nitems.register_food("qa_snack", 5, 0.8, {\n    "texture": "qa_snack",\n    "alwaysEdible": True,\n    "tab": "qa_tab",\n})`,
+        example: `from pyfish import items\n\nitems.register_food("ruby_snack", 5, 0.8, {\n    "texture": "ruby_snack",\n    "alwaysEdible": True,\n    "tab": "ruby_tab",\n})`,
         notes: [
             "Food callbacks still belong in the <span class=\"inline-code\">events</span> object when you want an <span class=\"inline-code\">eat</span> hook.",
             "Use a bare id when you want the content to stay inside the current script namespace automatically."
@@ -287,7 +285,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Tier and item configuration, commonly including <span class=\"inline-code\">durability</span>, <span class=\"inline-code\">damage</span>, <span class=\"inline-code\">attackSpeed</span>, <span class=\"inline-code\">speed</span>, <span class=\"inline-code\">repairItem</span>, and <span class=\"inline-code\">texture</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import items\n\nitems.register_tool("qa_multitool", "multitool", {\n    "texture": "qa_multitool",\n    "durability": 640,\n    "damage": 5,\n    "attackSpeed": -2.2,\n    "speed": 8.5,\n    "damageBonus": 3.0,\n    "repairItem": "minecraft:iron_ingot",\n})`,
+        example: `from pyfish import items\n\nitems.register_tool("ruby_multitool", "multitool", {\n    "texture": "ruby_multitool",\n    "durability": 640,\n    "damage": 5,\n    "attackSpeed": -2.2,\n    "speed": 8.5,\n    "damageBonus": 3.0,\n    "repairItem": "minecraft:iron_ingot",\n})`,
         notes: [
             "PyFish also assigns the relevant vanilla tool tags automatically for supported tool classes.",
             "When you only need a cosmetic or utility item, <span class=\"inline-code\">items.register_item(...)</span> is simpler."
@@ -313,7 +311,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Dictionary with block data such as <span class=\"inline-code\">texture</span>, <span class=\"inline-code\">destroyTime</span>, <span class=\"inline-code\">explosionResistance</span>, <span class=\"inline-code\">requiresCorrectToolForDrops</span>, <span class=\"inline-code\">tab</span>, and <span class=\"inline-code\">events</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import blocks\n\nblocks.register_block("qa_block", {\n    "texture": {\n        "top": "qa_block_top",\n        "bottom": "qa_block_bottom",\n        "side": "qa_block_side"\n    },\n    "destroyTime": 3.0,\n    "explosionResistance": 6.0,\n    "requiresCorrectToolForDrops": True,\n    "tab": "qa_tab",\n})`,
+        example: `from pyfish import blocks\n\nblocks.register_block("ruby_block", {\n    "texture": {\n        "top": "ruby_block_top",\n        "bottom": "ruby_block_bottom",\n        "side": "ruby_block_side"\n    },\n    "destroyTime": 3.0,\n    "explosionResistance": 6.0,\n    "requiresCorrectToolForDrops": True,\n    "tab": "ruby_tab",\n})`,
         notes: [
             "Registering a block also registers the matching block item automatically.",
             "If you want an interaction callback on the block itself, add a <span class=\"inline-code\">use</span> function inside the <span class=\"inline-code\">events</span> object."
@@ -341,7 +339,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["pattern / ingredients / keys", "Structure for the shaped or shapeless recipe, depending on the helper you use."]
         ],
         returns: "No return value.",
-        example: `from pyfish import recipes\n\nrecipes.shaped(\n    "qa_block_recipe",\n    "qa:qa_block",\n    1,\n    [\n        "II",\n        "II"\n    ],\n    {\n        "I": "qa:qa_ingot"\n    }\n)\n\nrecipes.shapeless("qa_snack_recipe", "qa:qa_snack", 1, [\n    "minecraft:apple",\n    "qa:qa_ingot"\n])`,
+        example: `from pyfish import recipes\n\nrecipes.shaped(\n    "ruby_block_recipe",\n    "ruby_tools:ruby_block",\n    1,\n    [\n        "II",\n        "II"\n    ],\n    {\n        "I": "ruby_tools:ruby_ingot"\n    }\n)\n\nrecipes.shapeless("ruby_snack_recipe", "ruby_tools:ruby_snack", 1, [\n    "minecraft:apple",\n    "ruby_tools:ruby_ingot"\n])`,
         notes: [
             "Tag ingredients can use the standard <span class=\"inline-code\">#namespace:path</span> syntax.",
             "The content helpers are available directly from the main <span class=\"inline-code\">pyfish</span> import."
@@ -367,10 +365,10 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["entries", "One or more registry ids or tag references to include in that tag."]
         ],
         returns: "No return value.",
-        example: `from pyfish import tags\n\ntags.add_item_tag("qa:qa_items", "qa:qa_ingot", "qa:qa_snack", "qa:qa_blade")\ntags.add_block_tag("qa:qa_blocks", "qa:qa_block")`,
+        example: `from pyfish import tags\n\ntags.add_item_tag("ruby_tools:ruby_items", "ruby_tools:ruby_ingot", "ruby_tools:ruby_snack", "ruby_tools:ruby_blade")\ntags.add_block_tag("ruby_tools:ruby_blocks", "ruby_tools:ruby_block")`,
         notes: [
             "Use tags when a recipe or future lookup should target a family instead of a single item id.",
-            "The validation pack already exercises this surface through the <span class=\"inline-code\">qa:*</span> tags."
+            "The example project already exercises this surface through the <span class=\"inline-code\">ruby_tools:*</span> tags."
         ],
         related: ["content-recipes", "content-register-item", "content-register-block"]
     },
@@ -393,7 +391,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["bytes / image", "Either encoded byte content or a Java image object, depending on the helper you choose."]
         ],
         returns: "No return value.",
-        example: `from pyfish import textures\n\nwith open("generated_logo.png", "rb") as handle:\n    textures.register_texture("qa_block_side", handle.read())`,
+        example: `from pyfish import textures\n\nwith open("generated_logo.png", "rb") as handle:\n    textures.register_texture("ruby_block_side", handle.read())`,
         notes: [
             "Texture registration is most useful when the content API is also generating items or blocks that refer to those texture ids.",
             "If the texture is already a normal static asset in a jar or resource pack, use the normal resource path instead of runtime registration."
@@ -419,7 +417,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Usually includes <span class=\"inline-code\">displayName</span> and <span class=\"inline-code\">icon</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import tabs\n\ntabs.create("qa_tab", {\n    "displayName": "PyFish QA",\n    "icon": "qa:qa_ingot"\n})`,
+        example: `from pyfish import tabs\n\ntabs.create("ruby_tab", {\n    "displayName": "Ruby Tools",\n    "icon": "ruby_tools:ruby_ingot"\n})`,
         notes: [
             "Use <span class=\"inline-code\">displayName</span>, not <span class=\"inline-code\">title</span>.",
             "Generated items and blocks can then point to that tab through their own <span class=\"inline-code\">tab</span> property."
@@ -460,7 +458,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-world",
         parentLabel: "World API",
         useCase: "Fast world-state reads",
-        useNote: "Use this for smoke tests, validation messages, or logic that depends on the current block id.",
+        useNote: "Use this for quick visible checks, verification messages, or logic that depends on the current block id.",
         summary: "Returns the registry id of the block currently present at the target coordinates.",
         description: [
             "The helper accepts the same world wrapper or raw Java world that other PyFish world calls accept.",
@@ -470,7 +468,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["world", "Server world or callback world wrapper."],
             ["x, y, z", "Block coordinates to inspect."]
         ],
-        returns: "A block registry id string such as <span class=\"inline-code\">minecraft:stone</span> or <span class=\"inline-code\">qa:qa_block</span>.",
+        returns: "A block registry id string such as <span class=\"inline-code\">minecraft:stone</span> or <span class=\"inline-code\">ruby_tools:ruby_block</span>.",
         example: `def on_block_break(event):\n    world = event.getLevel()\n    pos = event.getPos()\n    block_id = mc.get_block_id(world, pos.getX(), pos.getY(), pos.getZ())\n    print(f"Block at break position is now {block_id}")`,
         notes: [
             "Use integer block coordinates, not floating-point entity positions.",
@@ -486,7 +484,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-world",
         parentLabel: "World API",
         useCase: "Placing or replacing blocks from Python",
-        useNote: "Use this for fast structure changes, validation logic, or event-driven reactions.",
+        useNote: "Use this for fast structure changes, verification logic, or event-driven reactions.",
         summary: "Places or replaces one block at the target coordinates through the shared runtime bridge.",
         description: [
             "The helper accepts either a raw <span class=\"inline-code\">ServerLevel</span> or the wrapper returned by PyFish callbacks. That keeps the Python surface the same on both loaders.",
@@ -495,7 +493,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parameters: [
             ["world", "Server world or callback world wrapper."],
             ["x, y, z", "Target block coordinates."],
-            ["block_id", "Fully-qualified block id to place, such as <span class=\"inline-code\">minecraft:gold_block</span> or <span class=\"inline-code\">qa:qa_block</span>."]
+            ["block_id", "Fully-qualified block id to place, such as <span class=\"inline-code\">minecraft:gold_block</span> or <span class=\"inline-code\">ruby_tools:ruby_block</span>."]
         ],
         returns: "No return value.",
         example: `def on_player_join(event):\n    player = event.getPlayer() or event.getEntity()\n    world = event.getLevel() or player.serverLevel()\n    x = player.getBlockX() + 1\n    y = player.getBlockY()\n    z = player.getBlockZ()\n\n    mc.set_block(world, x, y, z, "minecraft:gold_block")\n    mc.send_message(player, f"Placed {mc.get_block_id(world, x, y, z)} at {x} {y} {z}")`,
@@ -517,7 +515,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         summary: "Breaks the targeted block and lets the normal world logic handle the result.",
         description: [
             "This is the safer choice when the script intends to behave like a real break action instead of a silent replacement.",
-            "It is useful for cleanup commands in validation scripts or event-driven systems that should still feel like Minecraft."
+            "It is useful for cleanup commands in verification scripts or event-driven systems that should still feel like Minecraft."
         ],
         parameters: [
             ["world", "Server world or callback world wrapper."],
@@ -564,7 +562,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-world",
         parentLabel: "World API",
         useCase: "Changing the day-night cycle",
-        useNote: "Use this for scripted scenarios, admin helpers, or quick validation commands.",
+        useNote: "Use this for scripted scenarios, admin helpers, or quick verification commands.",
         summary: "Sets the world time to the provided tick value.",
         description: [
             "This is a direct world helper, so it changes the target world's time immediately.",
@@ -590,7 +588,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Direct player feedback",
-        useNote: "Use this for targeted validation, event messages, and private scripted responses.",
+        useNote: "Use this for targeted verification, event messages, and private scripted responses.",
         summary: "Sends a system message to one player.",
         description: [
             "Player wrappers returned by callbacks can be passed directly into this helper.",
@@ -604,7 +602,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         example: `def on_player_join(event):\n    player = event.getPlayer() or event.getEntity()\n    mc.send_message(player, "PyFish runtime OK")`,
         notes: [
             "Use <span class=\"inline-code\">mc.broadcast_message(...)</span> when the whole world should see the message.",
-            "Messages are great smoke tests because they require very little game state."
+            "Messages are great quick visible checks because they require very little game state."
         ],
         related: ["mc-broadcast-message", "mc-on"]
     },
@@ -654,9 +652,9 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["count", "Stack size to give."]
         ],
         returns: "No return value.",
-        example: `def on_player_join(event):\n    player = event.getPlayer() or event.getEntity()\n    mc.give_item(player, "qa:qa_ingot", 8)\n    mc.give_item(player, "minecraft:torch", 16)`,
+        example: `def on_player_join(event):\n    player = event.getPlayer() or event.getEntity()\n    mc.give_item(player, "ruby_tools:ruby_ingot", 8)\n    mc.give_item(player, "minecraft:torch", 16)`,
         notes: [
-            "This is an excellent first validation step after registering new content.",
+            "This is an excellent first verification step after registering new content.",
             "If the item id is wrong, the Java bridge logs the registry problem clearly."
         ],
         related: ["content-register-item", "mc-send-message"]
@@ -694,11 +692,11 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Moving a player instantly",
-        useNote: "Use this for scripted travel, admin helpers, or tiny validation hops.",
+        useNote: "Use this for scripted travel, admin helpers, or tiny verification hops.",
         summary: "Teleports the target player to the given coordinates.",
         description: [
             "The helper expects a player target and raw coordinates. It does not need a separate world argument because the player identity already supplies the context for a normal same-world teleport.",
-            "The validation pack intentionally uses a very small hop command because that is an easy visible smoke test."
+            "The example project intentionally uses a very small hop command because that is an easy visible quick visible check."
         ],
         parameters: [
             ["player", "Player wrapper or raw server player."],
@@ -707,7 +705,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         returns: "No return value.",
         example: `def hop_player(player):\n    mc.teleport(player, player.getX(), player.getY() + 3, player.getZ())`,
         notes: [
-            "Use small movements for validation so players do not lose their bearings.",
+            "Use small movements for verification so players do not lose their bearings.",
             "If you need dimension-changing travel, use a dedicated event or loader-specific logic instead."
         ],
         related: ["mc-send-message", "mc-get-players"]
@@ -746,10 +744,10 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Adjusting hunger directly",
-        useNote: "Use this for challenge modes, scripted recovery, or QA checks.",
+        useNote: "Use this for challenge modes, scripted recovery, or scripted checks.",
         summary: "Sets the player's hunger level directly.",
         description: [
-            "The helper is useful for validation because the hunger bar is visible immediately.",
+            "The helper is useful for verification because the hunger bar is visible immediately.",
             "Unlike food registration, this affects the player state directly rather than creating an edible item."
         ],
         parameters: [
@@ -772,7 +770,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Setting XP level directly",
-        useNote: "Use this for scripted progression or QA shortcuts.",
+        useNote: "Use this for scripted progression or scripted shortcuts.",
         summary: "Sets the player's experience level.",
         description: [
             "The shared Python surface treats this as a direct level setter rather than a raw XP-point increment helper.",
@@ -798,7 +796,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Applying temporary effects",
-        useNote: "Use this for temporary boosts, scripted debuffs, or QA checks.",
+        useNote: "Use this for temporary boosts, scripted debuffs, or scripted checks.",
         summary: "Applies a status effect such as speed, regeneration, or night vision.",
         description: [
             "The effect id uses normal registry notation like <span class=\"inline-code\">minecraft:speed</span>.",
@@ -813,8 +811,8 @@ const PYFISH_DOC_DETAIL_PAGES = {
         returns: "No return value.",
         example: `def buff_player(player):\n    mc.add_effect(player, "minecraft:speed", 200, 0)\n    mc.send_message(player, "Speed boost applied.")`,
         notes: [
-            "The validation pack uses this surface because it is easy to confirm visually.",
-            "Keep durations short in smoke tests so the effect does not outlive the test context."
+            "The example project uses this surface because it is easy to confirm visually.",
+            "Keep durations short in quick visible checks so the effect does not outlive the test context."
         ],
         related: ["mc-set-health", "mc-send-message"]
     },
@@ -826,7 +824,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Spawning entities from Python",
-        useNote: "Use this for QA checks, scripted encounters, or world reactions.",
+        useNote: "Use this for scripted checks, scripted encounters, or world reactions.",
         summary: "Spawns an entity in the supplied world at the target coordinates.",
         description: [
             "This helper expects a normal entity type id such as <span class=\"inline-code\">minecraft:bee</span>.",
@@ -838,7 +836,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["x, y, z", "Spawn coordinates."]
         ],
         returns: "No return value in the public Python wrapper.",
-        example: `def spawn_test_bee(world, x, y, z):\n    mc.spawn_entity(world, "minecraft:bee", x + 2.5, y + 1.0, z + 0.5)\n    print("Spawned bee near the validation anchor")`,
+        example: `def spawn_bee(world, x, y, z):\n    mc.spawn_entity(world, "minecraft:bee", x + 2.5, y + 1.0, z + 0.5)\n    print("Spawned bee near the player")`,
         notes: [
             "Use a safe spawn position with enough air around it.",
             "Pair this with <span class=\"inline-code\">mc.get_entities_in_range(...)</span> if you want a second verification step."
@@ -853,7 +851,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-players",
         parentLabel: "Players and Entities API",
         useCase: "Entity cleanup",
-        useNote: "Use this for validation cleanup, scripted kills, or targeted removal without relying on the vanilla /kill command output.",
+        useNote: "Use this for verification cleanup, scripted kills, or targeted removal without relying on the vanilla /kill command output.",
         summary: "Kills the target entity when possible, with a safe fallback removal path.",
         description: [
             "This helper is designed to work well with nearby-entity scans and event callbacks.",
@@ -882,7 +880,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         useNote: "Use this to inspect or clean up nearby scripted entities.",
         summary: "Returns the entities inside a radius around the supplied point.",
         description: [
-            "This helper is commonly used after entity spawning or during validation scans.",
+            "This helper is commonly used after entity spawning or during verification scans.",
             "Returned entities can be passed into other helpers such as <span class=\"inline-code\">mc.kill_entity(...)</span>."
         ],
         parameters: [
@@ -932,11 +930,11 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-utils",
         parentLabel: "Utils and Environment API",
         useCase: "Explosion effects",
-        useNote: "Use this carefully for scripted events or QA checks.",
+        useNote: "Use this carefully for scripted events or scripted checks.",
         summary: "Creates an explosion with configurable fire and interaction mode.",
         description: [
             "The mode decides how the explosion interacts with the world. The public Python surface documents <span class=\"inline-code\">block</span>, <span class=\"inline-code\">none</span>, <span class=\"inline-code\">mob</span>, and <span class=\"inline-code\">tnt</span>.",
-            "The validation pack deliberately uses a non-destructive mode so the behavior is visible without griefing the test area."
+            "The example project deliberately uses a non-destructive mode so the behavior is visible without griefing the test area."
         ],
         parameters: [
             ["world", "Server world or callback world wrapper."],
@@ -961,11 +959,11 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-utils",
         parentLabel: "Utils and Environment API",
         useCase: "Visible world feedback",
-        useNote: "Use this for dramatic scripted events or simple smoke tests.",
+        useNote: "Use this for dramatic scripted events or simple quick visible checks.",
         summary: "Strikes lightning at the supplied coordinates.",
         description: [
             "Lightning is a useful visible signal that the runtime bridge is operating correctly.",
-            "Compared with explosions, it is often easier to use as a smoke test because the effect is clear and local."
+            "Compared with explosions, it is often easier to use as a quick visible check because the effect is clear and local."
         ],
         parameters: [
             ["world", "Server world or callback world wrapper."],
@@ -975,7 +973,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         example: `def test_lightning(world, x, y, z):\n    mc.strike_lightning(world, x, y, z)`,
         notes: [
             "Avoid repeatedly firing this in a dense area during automated tests.",
-            "A one-shot validation command is usually enough."
+            "A one-shot verification command is usually enough."
         ],
         related: ["mc-create-explosion", "mc-play-sound"]
     },
@@ -987,7 +985,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-utils",
         parentLabel: "Utils and Environment API",
         useCase: "Audio feedback",
-        useNote: "Use this for validation, ambience, or immediate player feedback.",
+        useNote: "Use this for verification, ambience, or immediate player feedback.",
         summary: "Plays a sound event at the supplied coordinates.",
         description: [
             "The public Python surface expects a sound id and lets you tune category, volume, and pitch.",
@@ -1003,7 +1001,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         returns: "No return value.",
         example: `def ping_anchor(world, x, y, z):\n    mc.play_sound(world, x, y, z, "minecraft:block.note_block.pling", "master", 1.0, 1.0)`,
         notes: [
-            "Use known-good vanilla sound ids during validation.",
+            "Use known-good vanilla sound ids during verification.",
             "Audio alone can be easy to miss, so pair it with a visible effect when possible."
         ],
         related: ["mc-spawn-particle", "mc-send-message"]
@@ -1016,10 +1014,10 @@ const PYFISH_DOC_DETAIL_PAGES = {
         parentView: "api-utils",
         parentLabel: "Utils and Environment API",
         useCase: "Visible scripted feedback",
-        useNote: "Use this for effects, markers, or validation commands.",
+        useNote: "Use this for effects, markers, or verification commands.",
         summary: "Spawns particles using count, spread, and speed parameters.",
         description: [
-            "Particles are one of the best non-destructive smoke tests because they are obvious and do not change gameplay state permanently.",
+            "Particles are one of the best non-destructive quick visible checks because they are obvious and do not change gameplay state permanently.",
             "The spread parameters let you fan particles out from the center point."
         ],
         parameters: [
@@ -1034,7 +1032,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         example: `def celebrate(world, x, y, z):\n    mc.spawn_particle(world, "minecraft:happy_villager", x, y + 1.0, z, 12, 0.4, 0.4, 0.4, 0.01)`,
         notes: [
             "Use visible vanilla particles for baseline testing.",
-            "Particles and sounds together make great QA commands."
+            "Particles and sounds together make great scripted commands."
         ],
         related: ["mc-play-sound", "mc-create-explosion"]
     },
@@ -1119,9 +1117,6 @@ function pyfishBuildLoaderMeta(loader, profileId) {
     const jarName = loader === "fabric"
         ? `pyfish-fabric-${profile.minecraftVersion}-${PYFISH_DOC_MOD_VERSION}.jar`
         : `pyfish-neoforge-${profile.minecraftVersion}-${PYFISH_DOC_MOD_VERSION}.jar`;
-    const jarPath = loader === "fabric"
-        ? `build/profiles/${profile.id}/fabric/libs/${jarName}`
-        : `build/profiles/${profile.id}/neoforge/libs/${jarName}`;
     const loaderVersionLabel = loader === "fabric"
         ? PYFISH_DOC_FABRIC_LOADER_VERSION
         : profile.neoforgeVersion;
@@ -1138,7 +1133,6 @@ function pyfishBuildLoaderMeta(loader, profileId) {
             ? `Fabric Loader ${loaderVersionLabel} + Fabric API ${apiVersionLabel}`
             : `NeoForge ${loaderVersionLabel}`,
         jarName,
-        jarPath,
         eventToolbar: loader === "fabric"
             ? `Fabric ${profile.minecraftVersion} is selected, so the bridge column shows the Fabric hook when the alias exists.`
             : `NeoForge ${profile.minecraftVersion} is selected, so the bridge column shows the NeoForge hook for each alias.`

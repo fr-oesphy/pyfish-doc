@@ -1,60 +1,49 @@
 # PyFish Documentation
 
-PyFish is a multiloader, multiversion Minecraft mod that embeds GraalPy so Python code can run directly at runtime on Fabric and NeoForge.
+PyFish embeds GraalPy in Minecraft so Python scripts and Python-powered mods can
+run on Fabric and NeoForge.
 
-Interactive documentation lives in:
+[Open the interactive HTML documentation](index.html) for the loader and
+version selectors, searchable events, and detailed per-function pages.
 
-- `documentation/documentation.html`
-
-The HTML documentation is now the most complete reference. It keeps everything in one file, but behaves like multiple internal pages and includes dedicated per-function pseudo-pages for the API cards.
-
-## Overview
+## Supported Environments
 
 - PyFish version: `1.2.0`
-- Minecraft targets: `1.21.1` through `1.21.11`
-- Java target: `21`
+- Minecraft: `1.21.1` through `1.21.11`
+- Java: `21`
 - Loaders: Fabric and NeoForge
-- Runtime: bundled GraalPy
-- Script layout: external `pyfish/` folder, packaged `.pyz` mods, and bundled jar resources
+- Python runtime: bundled GraalPy
 
-PyFish now covers four big areas:
+PyFish can be used in three ways:
 
-- runtime Python scripting with the shared `mc` API
-- shared and loader-specific event callbacks
-- dynamic content registration directly from Python
-- namespace-aware folders, packaged `.pyz` mods, and loader JAR projects
+- quick scripts in `pyfish/scripts/`
+- organized modpack logic in `pyfish/<namespace>/scripts/`
+- distributable Python mods as `.pyz` files or normal loader JARs
+
+The same shared API covers events, players, entities, world changes, commands,
+messages, particles, sounds, dynamic items, blocks, recipes, tags, textures,
+and creative tabs.
 
 ## Installation
 
-PyFish is distributed as one installable jar per loader and version profile.
+Download the PyFish JAR matching both your Minecraft version and loader from
+the [official Modrinth versions page](https://modrinth.com/mod/bdP4b2gP/versions).
 
 ### Fabric
 
-1. Install the Fabric Loader matching the target Minecraft version.
-2. Install the Fabric API matching the same Minecraft version.
-3. Copy the built PyFish jar into `mods/`.
-
-Expected jar pattern:
-
-- `build/profiles/<profile>/fabric/libs/pyfish-fabric-<minecraft>-1.2.0.jar`
+1. Install Fabric Loader for the selected Minecraft version.
+2. Install Fabric API for the same Minecraft version.
+3. Put the matching `pyfish-fabric-...`.jar in the Minecraft `mods/` folder.
+4. Start Minecraft with Java 21.
 
 ### NeoForge
 
-1. Install the NeoForge version matching the target Minecraft version.
-2. Copy the built PyFish jar into `mods/`.
+1. Install NeoForge for the selected Minecraft version.
+2. Put the matching `pyfish-neoforge-...`.jar in the Minecraft `mods/` folder.
+3. Start Minecraft with Java 21.
 
-Expected jar pattern:
-
-- `build/profiles/<profile>/neoforge/libs/pyfish-neoforge-<minecraft>-1.2.0.jar`
-
-### Do not install development artifacts
-
-Do not drop these into a normal instance:
-
-- `dev`
-- `dev-shadow`
-- `sources`
-- `javadoc`
+Do not mix Fabric and NeoForge JARs or use a JAR made for another Minecraft
+version.
 
 ## Deployment Modes
 
@@ -112,117 +101,118 @@ Meaning:
 
 ## External Scripts And Namespace Resolution
 
-PyFish can load scripts directly from the root `pyfish/` folder of the Minecraft instance or server.
-
-Expected layout:
+Quick scripts and organized modpack scripts live in the `pyfish/` folder.
+Packaged `.pyz` mods live in the normal Minecraft `mods/` folder beside the
+PyFish JAR.
 
 ```text
 .minecraft/
 |-- mods/
+|   |-- pyfish-neoforge-1.21.11-1.2.0.jar
+|   `-- example_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
-    |-- mods/
-    |   `-- packaged_mod-1.0.0.pyz
     |-- scripts/
     |   `-- global_fix.py
-    `-- my_mod/
+    `-- my_modpack/
         |-- requirements.txt
         `-- scripts/
             |-- init.py
             `-- gameplay.py
 ```
 
-Rules:
+Namespace rules:
 
-- `pyfish/scripts/*.py`
-  Global scripts under the `pyfish` namespace.
-- `pyfish/<mod_id>/scripts/*.py`
-  Logical Python mods using `<mod_id>` as namespace.
-- `pyfish/<mod_id>/requirements.txt`
-  Pure-Python dependencies scoped to that logical Python mod.
-- `pyfish/mods/*.pyz`
-  Packaged Python-only mods with a validated manifest and standard zipapp entrypoint.
-- scripts bundled inside a real mod jar
-  Use that Java mod's namespace automatically.
+- `pyfish/scripts/*.py` uses the `pyfish` namespace.
+- `pyfish/<name>/scripts/*.py` uses `<name>` as its namespace, even when no
+  installed loader mod has that id. This is useful for modpacks.
+- A `.pyz` mod uses the validated `id` from its `pyfish.json`.
+- Scripts bundled in a normal Fabric or NeoForge mod JAR use that JAR's mod id.
 
-This namespace resolution now also applies to runtime content registration:
+For example, `items.register_item("ruby", {...})` inside
+`pyfish/my_pack/scripts/` registers `my_pack:ruby`.
 
-- a global or modpack-style script normally resolves to `pyfish:<id>`
-- a logical Python mod in `pyfish/example/scripts/` resolves to `example:<id>`
-- a packaged mod resolves to the `id` declared in its root `pyfish.json`
-- a real mod using PyFish resolves to its own Java mod id
+A logical folder or `.pyz` can include `requirements.txt`. PyFish installs
+pure-Python dependencies into an isolated folder for that namespace and reuses
+them until the requirements change.
 
 ## Creating PyFish Mods
 
-PyFish supports two distribution formats.
+PyFish offers two distributable mod formats.
 
-### Python-only `.pyz` mods
+| Format | Best for | Files users install |
+| --- | --- | --- |
+| Python `.pyz` | A mod written entirely with the PyFish API | The same `.pyz` on Fabric and NeoForge |
+| Loader JAR | A mod that must appear as a native loader mod | One Fabric JAR or one NeoForge JAR |
 
-Use this format when the entire mod is written with the PyFish Python API.
-The result is one loader-neutral file placed in `pyfish/mods/`. The same
-archive can run with Fabric or NeoForge, although the script must only use APIs
-and events supported by its target Minecraft versions.
+Both formats require the normal PyFish JAR.
 
-The player or server owner still installs the normal PyFish jar on every side
-where the Python code must run. A `.pyz` is managed by PyFish and is not a
-standalone Fabric or NeoForge mod jar.
+### Recommended: Python-only `.pyz`
 
-Archive layout:
+A `.pyz` is a ZIP-based Python application. You do not create it manually:
+the provided builder collects the project and generates the final file.
 
-~~~text
-example_pyz_mod-1.0.0.pyz
+[Download the .pyz mod template](pyfish_pyz_template.zip)
+
+#### 1. Extract the template
+
+After extraction:
+
+```text
+pyfish_pyz_template/
+|-- build.py
+`-- src/
+    |-- pyfish.json
+    `-- __main__.py
+```
+
+Optional files can be added later:
+
+```text
+src/
 |-- pyfish.json
 |-- __main__.py
 |-- requirements.txt
-|-- example_pyz_mod/
+`-- example_mod/
     |-- __init__.py
     |-- content.py
-    |-- events.py
-~~~
+    `-- events.py
+```
 
 Only `pyfish.json` and `__main__.py` are required.
-`requirements.txt` and internal packages are optional.
 
-The standard zipapp entrypoint is `__main__.py`. An `__init__.py`
-only marks an internal Python package; it is not used as the mod manifest.
-Keeping metadata in JSON lets PyFish validate identity before arbitrary code
-executes.
+#### 2. Describe the mod
 
-Manifest example:
+Edit `src/pyfish.json`:
 
-~~~json
+```json
 {
   "schema_version": 1,
-  "id": "example_pyz_mod",
-  "name": "Example PyFish Mod",
+  "id": "example_mod",
+  "name": "Example Mod",
   "version": "1.0.0",
-  "description": "A Python-only Minecraft mod.",
+  "description": "My Python-powered Minecraft mod.",
   "authors": ["Your name"],
   "license": "MIT",
   "homepage": ""
 }
-~~~
+```
 
 Required fields:
 
-- `schema_version`
-- `id`
-- `name`
-- `version`
+- `schema_version`: currently `1`
+- `id`: the content namespace
+- `name`: displayed mod name
+- `version`: your mod version
 
-Optional fields:
-
-- `description`
-- `authors` as a string or array of strings
-- `license`
-- `homepage`
-
-The id accepts 1-64 lowercase letters, numbers, underscores, dots, or dashes.
+The id accepts lowercase letters, numbers, underscores, dots, and dashes.
 `minecraft` and `pyfish` are reserved.
 
-Entrypoint example:
+#### 3. Write the entrypoint
 
-~~~python
+Edit `src/__main__.py`:
+
+```python
 from pyfish import PlayerEvent, PyFishModMetadata, items, log_print, mc
 
 PYFISH_MOD: PyFishModMetadata
@@ -244,62 +234,119 @@ def on_player_join(event: PlayerEvent) -> None:
 
 mc.on("on_player_join", on_player_join)
 log_print(f"Loaded {PYFISH_MOD_NAME} {PYFISH_MOD_VERSION}")
-~~~
+```
 
-PyFish injects the complete manifest as `PYFISH_MOD` and exposes the id,
-name, and version as dedicated string globals. Unqualified content ids inherit
-the manifest id, so `items.register_item("python_token", ...)` registers
-`example_pyz_mod:python_token`.
+PyFish injects the four `PYFISH_MOD...` globals before the entrypoint runs.
+Unqualified content ids inherit the manifest id, so `python_token` above
+becomes `example_mod:python_token`.
 
-Build with the included template:
+An `__init__.py` is only needed inside an internal Python package. It is not
+the mod manifest.
 
-~~~text
-cd documentation/pyfish_pyz_template
+#### 4. Generate the `.pyz`
+
+Open a terminal in the extracted template folder.
+
+Windows:
+
+```text
+py -3 build.py
+```
+
+Any platform where Python uses the `python` command:
+
+```text
 python build.py
-~~~
+```
 
-The result is written to
-`documentation/pyfish_pyz_template/dist/<mod_id>-<version>.pyz`.
-Install it as:
+The builder creates:
 
-~~~text
+```text
+dist/<mod_id>-<version>.pyz
+```
+
+Building needs Python 3.10 or newer. It does not need Minecraft, Gradle, Fabric
+development tools, or NeoForge development tools.
+
+#### 5. Install and distribute
+
+Move the generated archive beside PyFish:
+
+```text
 .minecraft/
-|-- pyfish/
-    |-- mods/
-        |-- example_pyz_mod-1.0.0.pyz
-~~~
+`-- mods/
+    |-- pyfish-fabric-1.21.1-1.2.0.jar
+    `-- example_mod-1.0.0.pyz
+```
 
-PyFish creates `pyfish/mods/` automatically. Archives directly inside
-`pyfish/` are accepted too.
+The exact PyFish JAR name changes with the selected loader and Minecraft
+version. The `.pyz` itself is loader-neutral.
 
-Dependencies and imports:
+Share the generated `.pyz`, not the source template. Users install PyFish and
+place the archive in their normal `mods/` folder.
 
-- Root `requirements.txt` dependencies are installed into
-  `pyfish/libs/<mod_id>/` and cached by content hash.
-- Pure-Python packages are the most portable with GraalPy.
-- Keep larger mods inside a package named after the mod id, then use normal
-  imports such as
-  `from example_pyz_mod.content import register_content`.
-- The archive stays on Python's import path so callbacks can perform later
-  imports after startup.
+#### Dependencies and multiple files
 
-Validation and trust:
+Add a root `src/requirements.txt` for pure-Python packages. PyFish installs
+them under `pyfish/libs/<mod_id>/` and caches them by requirements content.
 
-- archives missing `pyfish.json` or `__main__.py` are rejected
-- invalid ids, unsupported schemas, unsafe or duplicate ZIP paths are rejected
-- archives are limited to 10,000 entries and 128 MiB uncompressed
-- a namespace collision with a folder, bundled script, or another archive
-  rejects the `.pyz` instead of silently replacing content
-- `.pyz` files are executable code with normal PyFish host access, so only
-  install archives from trusted sources
+For larger projects, create a package below `src/` and import it normally:
 
-### Fabric or NeoForge JAR mods
+```python
+from example_mod.content import register_content
+from example_mod.events import register_events
 
-Use `documentation/pyfish_mod_template/` when the project must appear as
-a native loader mod, needs loader metadata, or may later include Java code.
-Scripts bundled under `pyfish/<mod_id>/` inherit the real loader mod id.
-Unlike a `.pyz`, the JAR must be built for the selected loader and
-Minecraft version profile.
+register_content()
+register_events()
+```
+
+The archive stays on Python's import path after startup, so callbacks can still
+import internal modules later.
+
+#### Installation side
+
+- Server-only event logic can be installed only on the server.
+- Client-only helpers can be installed only on the client.
+- Mods registering items, blocks, tabs, textures, or other synchronized content
+  should install PyFish and the `.pyz` on both the server and every client.
+- A server can set `requireClientPyFish=true` in
+  `config/pyfish/server.properties` when clients must have PyFish.
+
+Only install `.pyz` files from sources you trust: they contain executable
+Python with the same PyFish access as normal scripts.
+
+### Native Fabric and NeoForge JAR mods
+
+Use the JAR template when the project must appear in the loader's mod list or
+when another mod needs to declare it as a dependency.
+
+[Download the multi-loader JAR mod template](pyfish_mod_template.zip)
+
+The template does not require Java source code. It packages loader metadata and
+Python resources, then creates separate JARs.
+
+1. Edit `gradle.properties`.
+2. Choose a unique `mod_id`.
+3. Rename `src/main/resources/pyfish/template_mod/` to
+   `src/main/resources/pyfish/<mod_id>/`.
+4. Write scripts inside that folder's `scripts/` directory.
+5. Run:
+
+```text
+gradlew.bat build
+```
+
+On Linux or macOS use `./gradlew build`.
+
+Outputs:
+
+```text
+build/libs/<mod_id>-fabric-<version>.jar
+build/libs/<mod_id>-neoforge-<version>.jar
+```
+
+Install only the JAR matching the user's loader. Scripts bundled this way
+automatically use the loader mod id as their content namespace.
 
 ## Getting Started
 
@@ -439,9 +486,8 @@ NeoForge still remains broader on specialized hooks:
 - more specialized entity hooks
 - command and explosion event coverage
 
-For the exact current matrix, use:
-
-- `documentation/documentation.html`
+For the exact current matrix, open the
+[interactive loader comparison](index.html#loader-differences).
 
 ## Dynamic Content API
 
@@ -594,7 +640,7 @@ Core helpers:
 - `mc.kill_entity(entity: EntityHandle)`
 - `mc.get_entities_in_range(world: WorldHandle, x: float, y: float, z: float, range: float)`
 
-Good smoke tests:
+Good visible checks:
 
 - give a generated item
 - apply a short speed effect
@@ -646,152 +692,83 @@ def on_player_chat(event: PlayerChatEvent):
 
 Names like `BlockEvent.EntityPlaceEvent` are nested NeoForge Java event classes. The HTML documentation shows those exact forwarded native class names for specialized NeoForge-only hooks.
 
-For the exact current event matrix, searchable by loader and version, use the HTML documentation. It now includes a dedicated callback-class column for every alias, showing either the shared PyFish wrapper class or the forwarded native NeoForge event class for specialized hooks:
-
-- `documentation/documentation.html`
+For the exact current event matrix, searchable by loader and version, open the
+[interactive Event System](index.html#events). It includes a callback
+class for every alias.
 
 ## IDE Support
 
-PyFish now ships an installable shim package so a normal Python interpreter can understand the PyFish modules in an IDE.
+[Download ide_support.zip](ide_support.zip) to add autocomplete, type hints, hover
+documentation, and import resolution to a normal Python IDE.
 
-This folder is designed to be distributable on its own, including inside a zip.
+The package is only for editing scripts. Minecraft still runs the real PyFish
+API through GraalPy.
 
-Fastest end-user flow:
+### Install on Windows
 
-1. extract `ide_support`
-2. open the extracted folder
-3. run `install_editable.bat` on Windows or `python -m pip install -e .` in a terminal
-4. run `python verify_install.py`
-5. select that same Python interpreter in the IDE
+1. Extract `ide_support.zip`.
+2. Open the extracted `ide_support` folder.
+3. Double-click `install_editable.bat`.
+4. Run `python verify_install.py`.
+5. Select the same Python interpreter in the IDE.
 
-What the current IDE support now adds on top of plain imports:
+The installer searches common Python installations, including the Microsoft
+Store launcher. If a terminal cannot find `python`, try:
 
-- typed `PlayerHandle`, `EntityHandle`, `WorldHandle`, `ServerHandle`, and `BlockPosHandle`
-- typed callback wrappers such as `PlayerEvent`, `PlayerChatEvent`, `BlockBreakEvent`, `PlayerInteractBlockEvent`, `EntitySpawnEvent`, and `LivingDamageEvent`
-- NeoForge-native event names such as `BlockEvent.EntityPlaceEvent`, `PlayerXpEvent.XpChange`, `ExplosionEvent.Detonate`, `PlayerEvent.ItemCraftedEvent`, and `LivingEvent.LivingJumpEvent`
-- better suggestions for event methods like `getPlayer()`, `getEntity()`, `getLevel()`, `getPos()`, `getTarget()`, and `getMessageString()`
-- richer content API hints for `items`, `blocks`, `recipes`, `tags`, `textures`, and `tabs`
+```text
+py -3 -m pip install -e .
+py -3 verify_install.py
+```
 
-Example:
+### Install manually
+
+From the extracted folder:
+
+```text
+python -m pip install -e .
+python verify_install.py
+```
+
+### Select the interpreter
+
+VS Code:
+
+1. Press `Ctrl+Shift+P`.
+2. Run `Python: Select Interpreter`.
+3. Select the interpreter used during installation.
+
+PyCharm:
+
+1. Open `Settings -> Project -> Python Interpreter`.
+2. Select the interpreter used during installation.
+3. Reopen the script.
+
+### Typed callbacks
+
+Annotating callbacks is valid both in the IDE and at runtime:
 
 ```python
-from pyfish import mc, PlayerChatEvent, BlockBreakEvent
+from pyfish import BlockBreakEvent, PlayerChatEvent, mc
 
-def on_player_chat(event: PlayerChatEvent):
+def on_player_chat(event: PlayerChatEvent) -> None:
     player = event.getPlayer()
-    message = event.getMessageString()
     if player is not None:
-        mc.send_message(player, f"You said: {message}")
+        mc.send_message(player, f"You said: {event.getMessageString()}")
 
-def on_block_break(event: BlockBreakEvent):
+def on_block_break(event: BlockBreakEvent) -> None:
     player = event.getPlayer()
     pos = event.getPos()
     if player is not None and pos is not None:
         mc.send_message(player, f"Broken at {pos.getX()} {pos.getY()} {pos.getZ()}")
 ```
 
-Repository-root install:
-
-```bash
-python -m pip install -e documentation/ide_support
-```
-
-Windows helper:
-
-```bat
-documentation\ide_support\install_editable.bat
-```
-
-Zip-friendly files included:
-
-- `documentation/ide_support/START_HERE.txt`
-- `documentation/ide_support/README.md`
-- `documentation/ide_support/install_editable.bat`
-- `documentation/ide_support/verify_install.py`
-
-What the shim exposes:
-
-- `pyfish`
-- `java_asyncio`
-- `java_logging`
-- `java_multiprocessing`
-- `java_pathlib`
-- `java_pillow`
-- `java_pyperclip`
-- `java_requests`
-- `java_sqlite3`
-- `java_subprocess`
-- `java_uuid`
-- `java_websocket`
-
-What it is for:
-
-- autocomplete
-- hover documentation
-- linting
-- editor import resolution
-
-Recommended IDE setup:
-
-- install the package into one Python interpreter
-- configure VS Code or PyCharm to use that exact same interpreter
-- confirm the setup with `python verify_install.py`
-
-What it is not:
-
-- not the actual Minecraft runtime
-- not a full simulation of server registries or Minecraft world state
-
-## Validation Pack
-
-PyFish now ships a ready-to-copy validation pack inside the repository:
-
-- `documentation/validation_pack/pyfish/qa/scripts/full_validation.py`
-- `documentation/VALIDATION_CHECKLIST.md`
-
-Install steps:
-
-1. Copy `documentation/validation_pack/pyfish/` into the root of a Minecraft instance or server.
-2. The final runtime path should become `pyfish/qa/scripts/full_validation.py`.
-3. Start the game or server with PyFish installed.
-
-The validation pack covers:
-
-- shared `mc` runtime helpers
-- integrated dynamic content registration
-- shared event callbacks
-- a wide chunk of the bundled `java_*` helper modules
-
-Useful in-game commands include:
-
-- `!pyfish help`
-- `!pyfish status`
-- `!pyfish libs`
-- `!pyfish block`
-- `!pyfish break`
-- `!pyfish bee`
-- `!pyfish scan`
-- `!pyfish cleanup`
-- `!pyfish particle`
-- `!pyfish sound`
-- `!pyfish command`
-- `!pyfish day`
-- `!pyfish night`
-- `!pyfish hop`
-- `!pyfish lightning`
-- `!pyfish boom`
-
-Optional environment-dependent commands:
-
-- `!pyfish requests`
-- `!pyfish subprocess`
-- `!pyfish clipboard`
+The package includes typed player, entity, world, server, position, event,
+content-registration, and bundled `java_*` module surfaces. It does not launch
+Minecraft or simulate a live world.
 
 ## Native Libraries
 
-PyFish now documents only the helper modules still bundled in the base mod.
-
-Current set:
+The following Java-backed helper modules are bundled with PyFish:
 
 - `java_requests`
   Official docs: https://requests.readthedocs.io/en/latest/
@@ -822,46 +799,3 @@ Notes:
 - `java_requests` and `java_websocket` depend on network access.
 - `java_subprocess` depends on local OS permissions and available tools.
 - `java_pyperclip` is mainly meaningful on desktop clients.
-
-## Build Outputs
-
-PyFish is built per loader and per validated version profile.
-
-Useful profile ids:
-
-- `mc1211`
-- `mc1212`
-- `mc1213`
-- `mc1214`
-- `mc1215`
-- `mc1216`
-- `mc1217`
-- `mc1218`
-- `mc1219`
-- `mc12110`
-- `mc12111`
-
-Typical outputs:
-
-- `build/profiles/<profile>/fabric/libs/pyfish-fabric-<minecraft>-1.2.0.jar`
-- `build/profiles/<profile>/neoforge/libs/pyfish-neoforge-<minecraft>-1.2.0.jar`
-
-## Mod Template
-
-The repository also ships a PyFish-powered mod template:
-
-- `documentation/pyfish_mod_template/`
-
-Use it when you want:
-
-- a real Java mod that embeds PyFish scripts
-- content registered under that mod's namespace instead of under `pyfish`
-- a starting point for shipping PyFish as part of a proper mod rather than only as a modpack script environment
-
-## Final Note
-
-For the most detailed, up-to-date, and loader-aware reference, open:
-
-- `documentation/documentation.html`
-
-That is where the per-function pseudo-pages, loader switch, version switch, and event matrix now live.
