@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 56" role="img" aria-labelledby="neoTitle neoDesc">
+  <title id="neoTitle">NeoForge</title>
+  <desc id="neoDesc">NeoForge loader badge</desc>
+  <rect x="1.5" y="1.5" width="177" height="53" rx="16" fill="#101a21" stroke="#233542" stroke-width="3"/>
+  <g transform="translate(14 10)">
+    <rect x="0" y="0" width="36" height="36" rx="12" fill="#ff8f42"/>
+    <path d="M9 27V9h6l6 8 6-8h5v18h-6V18l-5 6h-1l-5-6v9z" fill="#102734"/>
+    <path d="M9 29h23" stroke="#34d1b0" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="62" y="24" fill="#f5fbff" font-size="19" font-family="Segoe UI, Arial, sans-serif" font-weight="700">NeoForge</text>
+  <text x="62" y="39" fill="#89a9b8" font-size="10" font-family="Segoe UI, Arial, sans-serif" letter-spacing="1.2">LOADER</text>
+</svg>
