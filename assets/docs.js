@@ -203,7 +203,9 @@ const PYFISH_DOC_VIEWS = {
     events: "Event System",
     "ide-support": "IDE Support",
     libraries: "Native Libraries",
-    template: "Mod Template"
+    template: "Choose a Mod Format",
+    "pyz-mods": "Python .pyz Mods",
+    "jar-mods": "Fabric / NeoForge JAR Mods"
 };
 
 const PYFISH_DOC_VIEW_ALIASES = {

@@ -136,7 +136,7 @@ A logical folder or `.pyz` can include `requirements.txt`. PyFish installs
 pure-Python dependencies into an isolated folder for that namespace and reuses
 them until the requirements change.
 
-## Creating PyFish Mods
+## Choosing a Mod Format
 
 PyFish offers two distributable mod formats.
 
@@ -147,14 +147,17 @@ PyFish offers two distributable mod formats.
 
 Both formats require the normal PyFish JAR.
 
-### Recommended: Python-only `.pyz`
+If you are unsure, choose `.pyz`. It is simpler and one file works with both
+loaders. Choose JAR only when appearing as a native loader mod matters.
+
+## Python .pyz Mod Guide
 
 A `.pyz` is a ZIP-based Python application. You do not create it manually:
 the provided builder collects the project and generates the final file.
 
 [Download the .pyz mod template](pyfish_pyz_template.zip)
 
-#### 1. Extract the template
+### 1. Extract the template
 
 After extraction:
 
@@ -181,7 +184,7 @@ src/
 
 Only `pyfish.json` and `__main__.py` are required.
 
-#### 2. Describe the mod
+### 2. Describe the mod
 
 Edit `src/pyfish.json`:
 
@@ -208,7 +211,29 @@ Required fields:
 The id accepts lowercase letters, numbers, underscores, dots, and dashes.
 `minecraft` and `pyfish` are reserved.
 
-#### 3. Write the entrypoint
+### Why the manifest is JSON
+
+PyFish deliberately uses `pyfish.json`, not `pyfish.mod.toml`.
+
+JSON is the better choice for this particular manifest because:
+
+- the file contains only a few stable fields
+- its strict data model is easy to validate before Python code executes
+- PyFish already has reliable JSON parsing, so no additional TOML parser is needed
+- editors and build tools can validate it with a JSON Schema
+- launchers, websites, and scripts can read it almost everywhere
+
+TOML is excellent for large human-edited configuration files because comments
+and tables improve readability. A PyFish manifest is too small to benefit much
+from those features, so adding a second parser and syntax would create more
+surface area than value. The decision is therefore to keep `pyfish.json`.
+
+The manifest and user configuration solve different problems. Keep identity and
+distribution metadata in `pyfish.json`. If a mod needs many user-editable
+settings, it can use a separate TOML configuration file with comments without
+changing the manifest format.
+
+### 3. Write the entrypoint
 
 Edit `src/__main__.py`:
 
@@ -243,7 +268,7 @@ becomes `example_mod:python_token`.
 An `__init__.py` is only needed inside an internal Python package. It is not
 the mod manifest.
 
-#### 4. Generate the `.pyz`
+### 4. Generate the `.pyz`
 
 Open a terminal in the extracted template folder.
 
@@ -268,7 +293,7 @@ dist/<mod_id>-<version>.pyz
 Building needs Python 3.10 or newer. It does not need Minecraft, Gradle, Fabric
 development tools, or NeoForge development tools.
 
-#### 5. Install and distribute
+### 5. Install and distribute
 
 Move the generated archive beside PyFish:
 
@@ -285,7 +310,7 @@ version. The `.pyz` itself is loader-neutral.
 Share the generated `.pyz`, not the source template. Users install PyFish and
 place the archive in their normal `mods/` folder.
 
-#### Dependencies and multiple files
+### Dependencies and multiple files
 
 Add a root `src/requirements.txt` for pure-Python packages. PyFish installs
 them under `pyfish/libs/<mod_id>/` and caches them by requirements content.
@@ -303,7 +328,7 @@ register_events()
 The archive stays on Python's import path after startup, so callbacks can still
 import internal modules later.
 
-#### Installation side
+### Installation side
 
 - Server-only event logic can be installed only on the server.
 - Client-only helpers can be installed only on the client.
@@ -315,38 +340,116 @@ import internal modules later.
 Only install `.pyz` files from sources you trust: they contain executable
 Python with the same PyFish access as normal scripts.
 
-### Native Fabric and NeoForge JAR mods
+## Fabric and NeoForge JAR Mod Guide
 
 Use the JAR template when the project must appear in the loader's mod list or
 when another mod needs to declare it as a dependency.
 
 [Download the multi-loader JAR mod template](pyfish_mod_template.zip)
 
-The template does not require Java source code. It packages loader metadata and
-Python resources, then creates separate JARs.
+Choose this format only when native loader metadata is useful. A Python-only
+project that does not need to appear as a Fabric or NeoForge mod is simpler to
+distribute as `.pyz`.
 
-1. Edit `gradle.properties`.
-2. Choose a unique `mod_id`.
-3. Rename `src/main/resources/pyfish/template_mod/` to
-   `src/main/resources/pyfish/<mod_id>/`.
-4. Write scripts inside that folder's `scripts/` directory.
-5. Run:
+### Requirements and outputs
+
+- Java 21 is required to run the included Gradle wrapper.
+- A separate Gradle installation is not required.
+- Gameplay logic can remain entirely in Python.
+- One build creates one Fabric JAR and one NeoForge JAR.
+
+### 1. Extract and inspect the template
+
+The shared resource folder contains the Python code packaged into both JARs:
+
+```text
+pyfish_mod_template/
+|-- gradle.properties
+|-- build.gradle
+|-- gradlew.bat
+|-- gradlew
+`-- src/main/resources/
+    |-- fabric.mod.json
+    |-- META-INF/neoforge.mods.toml
+    `-- pyfish/template_mod/
+        |-- requirements.txt
+        `-- scripts/main.py
+```
+
+### 2. Configure the mod metadata
+
+Edit `gradle.properties` and set the mod id, display name, version, authors,
+license, and description. Choose a unique lowercase id such as `ruby_tools`.
+
+The build uses these shared values to generate the Fabric and NeoForge metadata.
+
+### 3. Match the namespace folder
+
+Rename:
+
+```text
+src/main/resources/pyfish/template_mod/
+```
+
+to a folder whose name exactly matches `mod_id`:
+
+```text
+src/main/resources/pyfish/ruby_tools/
+```
+
+This folder name controls the namespace used by the bundled scripts.
+
+### 4. Write the Python mod
+
+Place Python files in `pyfish/<mod_id>/scripts/`. Add pure-Python dependencies
+to `pyfish/<mod_id>/requirements.txt` when needed.
+
+For example:
+
+```python
+from pyfish import blocks, items
+
+items.register_item("ruby", {
+    "texture": "minecraft:item/emerald",
+    "stacksTo": 64,
+})
+
+blocks.register_block("ruby_block", {
+    "texture": "minecraft:block/emerald_block",
+})
+```
+
+With `mod_id=ruby_tools`, these ids become `ruby_tools:ruby` and
+`ruby_tools:ruby_block` on both loaders.
+
+### 5. Build both loader packages
+
+Open a terminal in the extracted template and run on Windows:
 
 ```text
 gradlew.bat build
 ```
 
-On Linux or macOS use `./gradlew build`.
+On Linux or macOS:
 
-Outputs:
+```text
+./gradlew build
+```
+
+The outputs are written to `build/libs/`:
 
 ```text
 build/libs/<mod_id>-fabric-<version>.jar
 build/libs/<mod_id>-neoforge-<version>.jar
 ```
 
-Install only the JAR matching the user's loader. Scripts bundled this way
-automatically use the loader mod id as their content namespace.
+### 6. Install the correct JAR
+
+- Fabric users install the `-fabric-` JAR, PyFish for Fabric, and Fabric API.
+- NeoForge users install the `-neoforge-` JAR and PyFish for NeoForge.
+- Do not install both generated JARs in the same Minecraft instance.
+- Mods registering synchronized content should be installed on the server and
+  every client. Pure server logic can remain server-only.
 
 ## Getting Started
 
