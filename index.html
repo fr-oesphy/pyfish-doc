@@ -74,7 +74,9 @@
                 <li><a href="#overview" data-nav-view="overview">Welcome</a></li>
                 <li><a href="#installation" data-nav-view="installation">Installation</a></li>
                 <li><a href="#scripts" data-nav-view="scripts">External Scripts</a></li>
-                <li><a href="#template" data-nav-view="template">Creating Mods</a></li>
+                <li><a href="#template" data-nav-view="template">Choose a Mod Format</a></li>
+                <li><a href="#pyz-mods" data-nav-view="pyz-mods">Python .pyz Mods</a></li>
+                <li><a href="#jar-mods" data-nav-view="jar-mods">Fabric / NeoForge JARs</a></li>
                 <li><a href="#getting-started" data-nav-view="getting-started">Getting Started</a></li>
                 <li><a href="#callback-objects" data-nav-view="callback-objects">Callback Objects</a></li>
                 <li><a href="#loader-differences" data-nav-view="loader-differences">Loader Differences</a></li>
@@ -188,7 +190,7 @@
                             <span>No limits, like for mods !</span>
                         </a>
                         <a class="quick-link" href="#template" data-view-link="template">
-                            <strong>Creating Mods</strong>
+                            <strong>Choose a Mod Format</strong>
                             <span>Build a Python-only .pyz or a loader-aware JAR with a stable mod namespace.</span>
                         </a>
                         <a class="quick-link" href="#getting-started" data-view-link="getting-started">
@@ -1494,75 +1496,142 @@ python verify_install.py</pre>
                 </section>
             </section>
 
-            <section class="doc-view" data-doc-view="template" hidden>
+            <section class="doc-view mod-guide" data-doc-view="template" hidden>
                 <header class="hero">
                     <div class="hero-brand">
                         <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
                             alt="PyFish logo">
                         <div class="hero-title">
-                            <h1>Creating PyFish Mods</h1>
+                            <h1>Create a PyFish Mod</h1>
                             <p class="hero-subtitle">
-                                Choose a Python-only <span class="inline-code">.pyz</span> for one-file distribution,
-                                or a normal loader JAR when the project needs native Fabric or NeoForge metadata.
-                                Both formats run through the same PyFish API and namespace rules.
+                                Start by choosing how people will install your mod. Both formats use the same Python
+                                API, but they solve different distribution needs.
                             </p>
                         </div>
                     </div>
-
                     <div data-loader-switch></div>
                 </header>
 
                 <section class="section">
-                    <div class="section-eyebrow">Choose a distribution format</div>
-                    <h2>Python zipapp or loader JAR</h2>
-                    <div class="cards">
-                        <article class="card">
-                            <div class="card-eyebrow">Python-only mod</div>
-                            <h3>Single <span class="inline-code">.pyz</span> file</h3>
-                            <ul class="detail-list">
-                                <li>Best for mods written entirely with the PyFish Python API.</li>
-                                <li>One archive works on Fabric and NeoForge; the script still needs to respect the
-                                    selected Minecraft version's documented API surface.</li>
-                                <li>Install it beside the PyFish JAR in the normal
-                                    <span class="inline-code">mods/</span> folder.</li>
-                                <li>Requires the normal PyFish jar on every side where the code must run.</li>
-                            </ul>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Loader-integrated mod</div>
-                            <h3>Fabric or NeoForge JAR</h3>
-                            <ul class="detail-list">
-                                <li>Best when the project must appear as a native loader mod with loader metadata.</li>
-                                <li>Can bundle Python scripts under <span class="inline-code">pyfish/&lt;mod_id&gt;/</span>.</li>
-                                <li>Download the JAR template below and build one output for each loader.</li>
-                                <li>Must be built for the targeted loader and Minecraft profile.</li>
-                            </ul>
-                        </article>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">Start a project</div>
-                    <h2>Download the format you need</h2>
-                    <div class="quick-links">
-                        <a class="quick-link" href="pyfish_pyz_template.zip" download>
-                            <strong>Download the .pyz template</strong>
-                            <span>Recommended: one Python-only mod file that works with Fabric and NeoForge.</span>
-                        </a>
-                        <a class="quick-link" href="pyfish_mod_template.zip" download>
-                            <strong>Download the JAR mod template</strong>
-                            <span>Creates separate Fabric and NeoForge JARs with native loader metadata.</span>
-                        </a>
-                    </div>
-                </section>
-
-                <section class="section">
-                    <div class="section-eyebrow">Recommended Python-only format</div>
-                    <h2>What a PyFish .pyz contains</h2>
+                    <div class="section-eyebrow">Step 1</div>
+                    <h2>Choose one format</h2>
                     <p class="section-intro">
-                        A <span class="inline-code">.pyz</span> is a standard Python zipapp: it is one file when
-                        distributed, but internally it is a ZIP archive containing Python source and metadata.
-                        PyFish validates the archive before any code executes.
+                        Most Python-only projects should use <span class="inline-code">.pyz</span>. Choose JAR only
+                        when the project needs to appear as a native Fabric or NeoForge mod.
+                    </p>
+
+                    <div class="format-choices">
+                        <article class="format-choice recommended">
+                            <span class="guide-badge">Recommended</span>
+                            <h2>Python <span class="inline-code">.pyz</span></h2>
+                            <p>One compact Python mod file shared by Fabric and NeoForge.</p>
+                            <ul class="detail-list">
+                                <li>No Gradle or Java project required.</li>
+                                <li>The included builder creates the file for you.</li>
+                                <li>Users place it beside PyFish in <span class="inline-code">mods/</span>.</li>
+                                <li>Best when every feature uses the PyFish API.</li>
+                            </ul>
+                            <div class="guide-actions">
+                                <a class="guide-action" href="#pyz-mods" data-view-link="pyz-mods">Open the .pyz guide</a>
+                                <a class="guide-action secondary" href="pyfish_pyz_template.zip" download>Download template</a>
+                            </div>
+                        </article>
+
+                        <article class="format-choice">
+                            <span class="guide-badge">Native loader package</span>
+                            <h2>Fabric / NeoForge JAR</h2>
+                            <p>Normal loader mods containing PyFish scripts and loader metadata.</p>
+                            <ul class="detail-list">
+                                <li>Appears in the Fabric or NeoForge mod list.</li>
+                                <li>Other mods can declare it as a dependency.</li>
+                                <li>Produces one JAR per loader.</li>
+                                <li>Uses Gradle, but gameplay code can remain entirely Python.</li>
+                            </ul>
+                            <div class="guide-actions">
+                                <a class="guide-action" href="#jar-mods" data-view-link="jar-mods">Open the JAR guide</a>
+                                <a class="guide-action secondary" href="pyfish_mod_template.zip" download>Download template</a>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="decision-note">
+                        <h3>The short answer</h3>
+                        <p>
+                            If you are unsure, choose <strong>.pyz</strong>. It is simpler, loader-neutral, and made
+                            specifically for Python-only PyFish mods. Choose <strong>JAR</strong> only when native
+                            loader metadata is useful to your project.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Shared rules</div>
+                    <h2>What both formats have in common</h2>
+                    <div class="two-up">
+                        <article class="card">
+                            <div class="card-eyebrow">PyFish dependency</div>
+                            <p>Users still install the normal PyFish JAR matching their loader and Minecraft version.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Stable namespace</div>
+                            <p>Your mod id becomes the namespace for unqualified item, block, recipe, tag, texture,
+                                and creative-tab ids.</p>
+                        </article>
+                    </div>
+                </section>
+            </section>
+
+            <section class="doc-view mod-guide" data-doc-view="pyz-mods" hidden>
+                <header class="hero">
+                    <div class="hero-brand">
+                        <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
+                            alt="PyFish logo">
+                        <div class="hero-title">
+                            <h1>Build a Python .pyz Mod</h1>
+                            <p class="hero-subtitle">
+                                Download a small template, edit two files, run one Python command, and place the
+                                generated archive in Minecraft's normal <span class="inline-code">mods/</span> folder.
+                            </p>
+                        </div>
+                    </div>
+                    <div data-loader-switch></div>
+                </header>
+
+                <section class="section">
+                    <div class="section-eyebrow">Before you start</div>
+                    <h2>What you need</h2>
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <div class="stat-label">Builder</div>
+                            <div class="stat-value">Python 3.10+</div>
+                            <p>No Gradle or Java development environment is required.</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-label">Output</div>
+                            <div class="stat-value">One .pyz file</div>
+                            <p>The same archive can be installed with Fabric or NeoForge.</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-label">Install location</div>
+                            <div class="stat-value">mods/</div>
+                            <p>Place it directly beside the normal PyFish JAR.</p>
+                        </article>
+                    </div>
+                    <div class="guide-actions" style="margin-top: 24px;">
+                        <a class="guide-action" href="pyfish_pyz_template.zip" download>Download pyfish_pyz_template.zip</a>
+                        <a class="guide-action secondary" href="#template" data-view-link="template">Back to format choice</a>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Understand the output</div>
+                    <h2>The builder creates one structured archive</h2>
+                    <p class="section-intro">
+                        A <span class="inline-code">.pyz</span> is one file when distributed, but internally it stores
+                        metadata, an entrypoint, and optional Python packages. You edit the source folder; the builder
+                        assembles this archive for you.
                     </p>
 
                     <div class="code-shell">
@@ -1634,6 +1703,54 @@ python verify_install.py</pre>
                 </section>
 
                 <section class="section">
+                    <div class="section-eyebrow">Metadata format decision</div>
+                    <h2>Why PyFish uses pyfish.json instead of TOML</h2>
+                    <div class="decision-note">
+                        <h3>Decision: keep <span class="inline-code">pyfish.json</span></h3>
+                        <p>
+                            TOML is a good configuration language, but JSON is the better manifest format for PyFish.
+                            The file is small and machine-validated, so TOML's comments and table syntax would add less
+                            value than JSON's strictness and universal tooling.
+                        </p>
+                    </div>
+                    <div class="two-up" style="margin-top: 22px;">
+                        <article class="card">
+                            <div class="card-eyebrow">Strict before execution</div>
+                            <h3>Predictable validation</h3>
+                            <p>JSON has a compact, unambiguous data model. PyFish can reject invalid metadata before
+                                loading any Python code.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">No extra parser</div>
+                            <h3>Smaller runtime surface</h3>
+                            <p>The runtime already includes reliable JSON support. TOML would add another parser and
+                                another compatibility surface for a very small file.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Editor support</div>
+                            <h3>Easy schema tooling</h3>
+                            <p>Editors can validate and autocomplete JSON manifests with a JSON Schema. Build tools,
+                                launchers, and websites can also read the format easily.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Why not TOML?</div>
+                            <h3>Its strengths are not needed here</h3>
+                            <p>TOML is more pleasant for long hand-written configuration with comments and nested
+                                tables. A PyFish manifest has only a few stable fields, so those benefits do not
+                                outweigh a second format dependency.</p>
+                        </article>
+                    </div>
+                    <div class="decision-note" style="margin-top: 22px;">
+                        <h3>Manifest and configuration are different jobs</h3>
+                        <p>
+                            Keep identity and distribution metadata in <span class="inline-code">pyfish.json</span>.
+                            If your mod later needs a large, user-edited settings file with comments, that separate
+                            configuration file can use TOML without changing the manifest format.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="section">
                     <div class="section-eyebrow">Entrypoint</div>
                     <h2>Register content and events normally</h2>
                     <div class="code-shell">
@@ -1676,53 +1793,57 @@ log_print(f"Loaded {PYFISH_MOD_NAME} {PYFISH_MOD_VERSION}")</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Build a .pyz</div>
-                    <h2>From downloaded template to installed mod</h2>
+                    <div class="section-eyebrow">Build and install</div>
+                    <h2>Four steps from template to Minecraft</h2>
                     <p class="section-intro">
-                        A <span class="inline-code">.pyz</span> is generated for you. You do not need to create a ZIP
-                        manually and you do not need Gradle, Fabric development tools, or NeoForge development tools.
-                        A normal Python 3.10+ installation is enough.
+                        The builder creates the archive. Do not rename a normal ZIP by hand: use
+                        <span class="inline-code">build.py</span> so the internal layout is always correct.
                     </p>
-
-                    <div class="two-up">
-                        <article class="callout">
-                            <div class="card-eyebrow">1. Prepare the project</div>
-                            <ol class="detail-list">
-                                <li>Download and extract <span class="inline-code">pyfish_pyz_template.zip</span>.</li>
-                                <li>Edit <span class="inline-code">src/pyfish.json</span> with your id, name, version,
-                                    authors, and description.</li>
-                                <li>Write your mod in <span class="inline-code">src/__main__.py</span>.</li>
-                                <li>Add modules or a package inside <span class="inline-code">src/</span> if the mod
-                                    grows beyond one file.</li>
-                            </ol>
-                        </article>
-                        <article class="callout">
-                            <div class="card-eyebrow">2. Generate the file</div>
-                            <div class="code-shell" style="margin-top: 12px;">
-                                <pre>py -3 build.py
-
-# Or on systems where Python uses this command:
-python build.py</pre>
+                    <div class="guide-steps">
+                        <article class="guide-step">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h3>Extract the downloaded template</h3>
+                                <p>Open <span class="inline-code">pyfish_pyz_template/</span>. All editable project
+                                    files are inside its <span class="inline-code">src/</span> folder.</p>
                             </div>
-                            <p>The builder creates
-                                <span class="inline-code">dist/&lt;mod_id&gt;-&lt;version&gt;.pyz</span>.</p>
                         </article>
-                        <article class="callout">
-                            <div class="card-eyebrow">3. Install and test</div>
-                            <div class="code-shell" style="margin-top: 12px;">
-                                <pre>.minecraft/
+                        <article class="guide-step">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h3>Edit metadata and Python code</h3>
+                                <p>Fill in <span class="inline-code">src/pyfish.json</span>, then write the mod in
+                                    <span class="inline-code">src/__main__.py</span>. Add packages under
+                                    <span class="inline-code">src/</span> when needed.</p>
+                            </div>
+                        </article>
+                        <article class="guide-step">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h3>Run the builder</h3>
+                                <p>Open a terminal in the template folder and run one of these commands:</p>
+                                <div class="code-shell">
+                                    <pre>py -3 build.py
+
+# Or:
+python build.py</pre>
+                                </div>
+                                <p style="margin-top: 14px;">The result appears in
+                                    <span class="inline-code">dist/&lt;mod_id&gt;-&lt;version&gt;.pyz</span>.</p>
+                            </div>
+                        </article>
+                        <article class="guide-step">
+                            <div class="step-number">4</div>
+                            <div>
+                                <h3>Move the result into Minecraft</h3>
+                                <p>Install the generated file beside PyFish. Share this generated file with users.</p>
+                                <div class="code-shell">
+                                    <pre>.minecraft/
 `-- mods/
     |-- pyfish-fabric-1.21.1-1.2.0.jar
     `-- example_pyz_mod-1.0.0.pyz</pre>
+                                </div>
                             </div>
-                            <p>Move the generated <span class="inline-code">.pyz</span> into the same
-                                <span class="inline-code">mods/</span> folder as PyFish, then start Minecraft.</p>
-                        </article>
-                        <article class="callout">
-                            <div class="card-eyebrow">4. Distribute</div>
-                            <p>Share the generated <span class="inline-code">.pyz</span>. Users install the normal
-                                PyFish JAR for their loader and place your archive in their
-                                <span class="inline-code">mods/</span> folder. The same archive works on both loaders.</p>
                         </article>
                     </div>
                 </section>
@@ -1751,49 +1872,7 @@ python build.py</pre>
                     </div>
                 </section>
 
-                <section class="section">
-                    <div class="section-eyebrow">Choose the installation side</div>
-                    <h2>Server logic or synchronized content</h2>
-                    <div class="cards">
-                        <article class="card">
-                            <div class="card-eyebrow">Server-only logic</div>
-                            <p>Event handlers, commands, automation, and server rules can run only on the server when
-                                they do not register content required by clients.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Client-only logic</div>
-                            <p>Local helpers can run only on the client when they do not change server gameplay or
-                                synchronized registries.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Custom content</div>
-                            <p>Install PyFish and the same mod on the server and every client when it registers items,
-                                blocks, creative tabs, textures, or other synchronized content.</p>
-                        </article>
-                    </div>
-                </section>
 
-                <section class="section">
-                    <div class="section-eyebrow">Choose the installation side</div>
-                    <h2>Server logic or synchronized content</h2>
-                    <div class="cards">
-                        <article class="card">
-                            <div class="card-eyebrow">Server-only logic</div>
-                            <p>Event handlers, commands, automation, and server rules can run only on the server when
-                                they do not register content required by clients.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Client-only logic</div>
-                            <p>Local helpers can run only on the client when they do not change server gameplay or
-                                synchronized registries.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">Custom content</div>
-                            <p>Install PyFish and the same mod on the server and every client when it registers items,
-                                blocks, creative tabs, textures, or other synchronized content.</p>
-                        </article>
-                    </div>
-                </section>
 
                 <section class="section">
                     <div class="section-eyebrow">Choose the installation side</div>
@@ -1833,39 +1912,177 @@ python build.py</pre>
                     </ul>
                 </section>
 
-                <section class="section">
-                    <div class="section-eyebrow">Normal loader mod</div>
-                    <h2>Build Fabric and NeoForge JARs</h2>
-                    <p class="section-intro">
-                        Use this format when your project must appear as a normal loader mod or another mod needs to
-                        depend on it. The template contains native Fabric and NeoForge metadata while your gameplay
-                        code remains Python.
-                    </p>
-                    <div class="quick-links" style="margin-bottom: 18px;">
-                        <a class="quick-link" href="pyfish_mod_template.zip" download>
-                            <strong>Download pyfish_mod_template.zip</strong>
-                            <span>A clean multi-loader project with Gradle wrapper and an example typed script.</span>
-                        </a>
+            </section>
+
+            <section class="doc-view mod-guide" data-doc-view="jar-mods" hidden>
+                <header class="hero">
+                    <div class="hero-brand">
+                        <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
+                            alt="PyFish logo">
+                        <div class="hero-title">
+                            <h1>Build Fabric and NeoForge JAR Mods</h1>
+                            <p class="hero-subtitle">
+                                Package Python scripts as normal loader mods. The template generates one Fabric JAR
+                                and one NeoForge JAR while keeping gameplay code in Python.
+                            </p>
+                        </div>
                     </div>
-                    <div class="two-up">
-                        <article class="callout">
-                            <div class="card-eyebrow">Configure</div>
-                            <ol class="detail-list">
-                                <li>Edit <span class="inline-code">gradle.properties</span>.</li>
-                                <li>Rename <span class="inline-code">src/main/resources/pyfish/template_mod/</span>
-                                    to use the exact same id as <span class="inline-code">mod_id</span>.</li>
-                                <li>Write scripts inside its <span class="inline-code">scripts/</span> folder.</li>
-                            </ol>
+                    <div data-loader-switch></div>
+                </header>
+
+                <section class="section">
+                    <div class="section-eyebrow">Before you start</div>
+                    <h2>Use JAR only when loader metadata matters</h2>
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <div class="stat-label">Build tool</div>
+                            <div class="stat-value">Java 21 + Gradle wrapper</div>
+                            <p>The wrapper is included, so Gradle does not need to be installed separately.</p>
                         </article>
-                        <article class="callout">
-                            <div class="card-eyebrow">Build</div>
-                            <div class="code-shell" style="margin-top: 12px;">
-                                <pre>gradlew.bat build</pre>
+                        <article class="stat-card">
+                            <div class="stat-label">Outputs</div>
+                            <div class="stat-value">Two JARs</div>
+                            <p>One for Fabric and one for NeoForge.</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-label">Python code</div>
+                            <div class="stat-value">Shared scripts</div>
+                            <p>The same scripts and namespace are packaged into both outputs.</p>
+                        </article>
+                    </div>
+                    <div class="guide-actions" style="margin-top: 24px;">
+                        <a class="guide-action" href="pyfish_mod_template.zip" download>Download pyfish_mod_template.zip</a>
+                        <a class="guide-action secondary" href="#template" data-view-link="template">Back to format choice</a>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="decision-note">
+                        <h3>What changes compared with .pyz?</h3>
+                        <p>
+                            A JAR has native Fabric or NeoForge metadata and appears in the loader's mod list. This is
+                            useful for dependencies and conventional mod distribution, but users need the JAR matching
+                            their loader. If none of that matters, the <span class="inline-code">.pyz</span> format is
+                            simpler.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Project layout</div>
+                    <h2>Only one folder contains your gameplay code</h2>
+                    <p class="section-intro">
+                        Both loader JARs receive the same scripts. Fabric and NeoForge metadata are generated from the
+                        shared values in <span class="inline-code">gradle.properties</span>.
+                    </p>
+                    <div class="code-shell">
+                        <pre>pyfish_mod_template/
+|-- gradle.properties
+|-- build.gradle
+|-- gradlew.bat
+|-- gradlew
+`-- src/main/resources/
+    |-- fabric.mod.json
+    |-- META-INF/neoforge.mods.toml
+    `-- pyfish/template_mod/
+        |-- requirements.txt
+        `-- scripts/main.py</pre>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Configure and build</div>
+                    <h2>Four ordered steps</h2>
+                    <div class="guide-steps">
+                        <article class="guide-step">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h3>Edit gradle.properties</h3>
+                                <p>Set <span class="inline-code">mod_id</span>, name, version, authors, license, and
+                                    description. Use a unique lowercase mod id such as
+                                    <span class="inline-code">ruby_tools</span>.</p>
                             </div>
-                            <p>Install the matching file from <span class="inline-code">build/libs/</span>:
-                                one ends in <span class="inline-code">-fabric-...</span> and the other in
-                                <span class="inline-code">-neoforge-...</span>.</p>
                         </article>
+                        <article class="guide-step">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h3>Rename the script namespace folder</h3>
+                                <p>Rename <span class="inline-code">src/main/resources/pyfish/template_mod/</span> to
+                                    <span class="inline-code">src/main/resources/pyfish/ruby_tools/</span>. The folder
+                                    name must exactly match <span class="inline-code">mod_id</span>.</p>
+                            </div>
+                        </article>
+                        <article class="guide-step">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h3>Write Python scripts</h3>
+                                <p>Put scripts in the namespace folder's <span class="inline-code">scripts/</span>
+                                    directory. Add pure-Python packages to its
+                                    <span class="inline-code">requirements.txt</span> when needed.</p>
+                            </div>
+                        </article>
+                        <article class="guide-step">
+                            <div class="step-number">4</div>
+                            <div>
+                                <h3>Build both loaders</h3>
+                                <div class="code-shell">
+                                    <pre>gradlew.bat build
+
+# Linux or macOS:
+./gradlew build</pre>
+                                </div>
+                                <p style="margin-top: 14px;">The command creates both files in
+                                    <span class="inline-code">build/libs/</span>.</p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Build results</div>
+                    <h2>Install only the matching loader JAR</h2>
+                    <div class="code-shell">
+                        <pre>build/libs/ruby_tools-fabric-1.0.0.jar
+build/libs/ruby_tools-neoforge-1.0.0.jar</pre>
+                    </div>
+                    <div class="two-up" style="margin-top: 22px;">
+                        <article class="card">
+                            <div class="card-eyebrow">Fabric instance</div>
+                            <p>Install the <span class="inline-code">-fabric-</span> JAR, PyFish for Fabric, and
+                                Fabric API.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">NeoForge instance</div>
+                            <p>Install the <span class="inline-code">-neoforge-</span> JAR and PyFish for NeoForge.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Namespace behavior</div>
+                    <h2>The loader mod id becomes the content namespace</h2>
+                    <div class="code-shell">
+                        <pre>from pyfish import blocks, items
+
+items.register_item("ruby", {...})
+blocks.register_block("ruby_block", {...})</pre>
+                    </div>
+                    <p class="section-intro" style="margin-top: 20px;">
+                        With <span class="inline-code">mod_id=ruby_tools</span>, these become
+                        <span class="inline-code">ruby_tools:ruby</span> and
+                        <span class="inline-code">ruby_tools:ruby_block</span> on both loaders.
+                    </p>
+                </section>
+
+                <section class="section">
+                    <div class="section-eyebrow">Installation side</div>
+                    <h2>Custom content normally belongs on both sides</h2>
+                    <div class="decision-note">
+                        <p>
+                            Install the matching JAR and PyFish on the server and every client when the mod registers
+                            items, blocks, creative tabs, textures, or other synchronized content. Pure server logic
+                            can remain server-only.
+                        </p>
                     </div>
                 </section>
             </section>
