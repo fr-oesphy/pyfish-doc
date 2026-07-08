@@ -402,6 +402,15 @@ missingClientMessage=This server requires PyFish on the client.</pre>
     |   `-- global_fix.py
     `-- my_mod/
         |-- requirements.txt
+        |-- assets/
+        |   `-- my_mod/
+        |       `-- textures/
+        |           `-- item/
+        |               `-- ruby.png
+        |-- data/
+        |   `-- my_mod/
+        |       `-- recipes/
+        |           `-- ruby.json
         `-- scripts/
             |-- init.py
             `-- gameplay.py</pre>
@@ -421,6 +430,13 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                             <h3><span class="inline-code">pyfish/&lt;mod_id&gt;/scripts/</span></h3>
                             <p>Each folder acts like a small Python-powered content pack. Grouping scripts this way
                                 keeps pack-specific logic easier to maintain.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Static resources</div>
+                            <h3><span class="inline-code">assets/</span> and <span class="inline-code">data/</span></h3>
+                            <p>Logical mods can also bundle normal Minecraft resources under
+                                <span class="inline-code">pyfish/&lt;mod_id&gt;/assets/&lt;namespace&gt;/...</span>
+                                and <span class="inline-code">pyfish/&lt;mod_id&gt;/data/&lt;namespace&gt;/...</span>.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Dependencies</div>
@@ -450,7 +466,9 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                             <div class="card-eyebrow">Packaged zipapps</div>
                             <p>Files ending in <span class="inline-code">.pyz</span> inside the normal
                                 <span class="inline-code">mods/</span> folder are validated before execution. Their
-                                manifest id becomes the content namespace and dependencies stay isolated under it.</p>
+                                manifest id becomes the content namespace, bundled
+                                <span class="inline-code">assets/</span> and <span class="inline-code">data/</span>
+                                are exposed automatically, and dependencies stay isolated under it.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">External overrides</div>
@@ -1636,9 +1654,11 @@ python verify_install.py</pre>
 
                     <div class="code-shell">
                         <pre>example_pyz_mod-1.0.0.pyz
-|-- pyfish.json
+|-- pyfish.mod.json
 |-- __main__.py
 |-- requirements.txt        # optional
+|-- assets/example_pyz_mod/ # optional bundled resources
+|-- data/example_pyz_mod/   # optional bundled data
 |-- example_pyz_mod/        # optional internal package
     |-- __init__.py
     |-- content.py
@@ -1647,7 +1667,7 @@ python verify_install.py</pre>
 
                     <div class="cards" style="margin-top: 18px;">
                         <article class="card">
-                            <div class="card-eyebrow">pyfish.json</div>
+                            <div class="card-eyebrow">pyfish.mod.json</div>
                             <p>Declarative mod metadata. PyFish reads and validates it before executing Python, so the
                                 mod id cannot depend on arbitrary startup code.</p>
                         </article>
@@ -1676,7 +1696,17 @@ python verify_install.py</pre>
   "description": "A Python-only Minecraft mod.",
   "authors": ["Your name"],
   "license": "MIT",
-  "homepage": ""
+  "homepage": "",
+  "dependencies": {
+    "pyz": [
+      {"id": "shared_core", "version": ">=1.2.0 &lt;2.0.0"},
+      {"id": "ui_pack", "version": "1.4.x || 1.5.x"}
+    ],
+    "jar": [
+      {"id": "fabric-api", "version": "[0.115.0,)"},
+      {"id": "another_mod", "version": "!=2.0.0"}
+    ]
+  }
 }</pre>
                     </div>
 
@@ -1691,7 +1721,8 @@ python verify_install.py</pre>
                             <strong>Optional</strong>
                             <span><span class="inline-code">description</span>,
                                 <span class="inline-code">authors</span>, <span class="inline-code">license</span>,
-                                and <span class="inline-code">homepage</span></span>
+                                <span class="inline-code">homepage</span>, and
+                                <span class="inline-code">dependencies</span></span>
                         </div>
                         <div class="meta-row">
                             <strong>Mod id rules</strong>
@@ -1764,8 +1795,10 @@ log_print(f"Loaded {PYFISH_MOD_NAME} {PYFISH_MOD_VERSION}")</pre>
                             <div class="step-number">2</div>
                             <div>
                                 <h3>Edit metadata and Python code</h3>
-                                <p>Fill in <span class="inline-code">src/pyfish.json</span>, then write the mod in
-                                    <span class="inline-code">src/__main__.py</span>. Add packages under
+                                <p>Fill in <span class="inline-code">src/pyfish.mod.json</span>, then write the mod in
+                                    <span class="inline-code">src/__main__.py</span>. Add packages, bundled
+                                    <span class="inline-code">assets/</span>, and
+                                    <span class="inline-code">data/</span> under
                                     <span class="inline-code">src/</span> when needed.</p>
                             </div>
                         </article>
@@ -1811,10 +1844,23 @@ python build.py</pre>
                                 hash-based dependency cache.</p>
                         </article>
                         <article class="card">
+                            <div class="card-eyebrow">Manifest dependencies</div>
+                            <p>Use <span class="inline-code">dependencies.pyz</span> to wait for another PyFish
+                                namespace and <span class="inline-code">dependencies.jar</span> to require a normal
+                                Fabric or NeoForge mod id. A bare string means "any version", and object entries can
+                                declare exact versions, comparisons, ranges, wildcards, or alternatives.</p>
+                        </article>
+                        <article class="card">
                             <div class="card-eyebrow">Internal packages</div>
                             <p>Package larger projects below a folder matching the mod id, then import with
                                 <span class="inline-code">from example_pyz_mod.content import register_content</span>.
                                 The archive remains on Python's import path for later event callbacks.</p>
+                        </article>
+                        <article class="card">
+                            <div class="card-eyebrow">Bundled resources</div>
+                            <p>Place static files in the archive with the normal Minecraft layout such as
+                                <span class="inline-code">assets/&lt;namespace&gt;/textures/...</span> and
+                                <span class="inline-code">data/&lt;namespace&gt;/recipes/...</span>.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Pure Python first</div>
@@ -1852,7 +1898,7 @@ python build.py</pre>
                     <div class="section-eyebrow">Safety and troubleshooting</div>
                     <h2>Invalid archives fail clearly</h2>
                     <ul class="detail-list">
-                        <li>An archive missing <span class="inline-code">pyfish.json</span> or
+                        <li>An archive missing <span class="inline-code">pyfish.mod.json</span> or
                             <span class="inline-code">__main__.py</span> is rejected before execution.</li>
                         <li>Duplicate or unsafe ZIP paths, unsupported schema versions, invalid ids, archives above
                             128 MiB uncompressed, and archives above 10,000 entries are rejected.</li>
@@ -1936,6 +1982,8 @@ python build.py</pre>
 `-- src/main/resources/
     |-- fabric.mod.json
     |-- META-INF/neoforge.mods.toml
+    |-- assets/ruby_tools/...
+    |-- data/ruby_tools/...
     `-- pyfish/template_mod/
         |-- requirements.txt
         `-- scripts/main.py</pre>
@@ -1970,7 +2018,9 @@ python build.py</pre>
                                 <h3>Write Python scripts</h3>
                                 <p>Put scripts in the namespace folder's <span class="inline-code">scripts/</span>
                                     directory. Add pure-Python packages to its
-                                    <span class="inline-code">requirements.txt</span> when needed.</p>
+                                    <span class="inline-code">requirements.txt</span> when needed, and put static
+                                    resources in <span class="inline-code">src/main/resources/assets/&lt;mod_id&gt;/...</span>
+                                    and <span class="inline-code">src/main/resources/data/&lt;namespace&gt;/...</span>.</p>
                             </div>
                         </article>
                         <article class="guide-step">
