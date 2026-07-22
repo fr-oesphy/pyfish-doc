@@ -218,17 +218,7 @@ Edit `src/pyfish.mod.json`:
   "description": "My Python-powered Minecraft mod.",
   "authors": ["Your name"],
   "license": "MIT",
-  "homepage": "",
-  "dependencies": {
-    "pyz": [
-      {"id": "shared_core", "version": ">=1.2.0 <2.0.0"},
-      {"id": "ui_pack", "version": "1.4.x || 1.5.x"}
-    ],
-    "jar": [
-      {"id": "fabric-api", "version": "[0.115.0,)"},
-      {"id": "another_mod", "version": "!=2.0.0"}
-    ]
-  }
+  "homepage": ""
 }
 ```
 
@@ -238,22 +228,8 @@ Required fields:
 - `id`: the content namespace
 - `name`: displayed mod name
 - `version`: your mod version
-- `dependencies.pyz`: optional PyFish namespaces that must load before this archive executes
-- `dependencies.jar`: optional Fabric or NeoForge mod ids that must already be installed
 
-Dependency entry formats:
-
-- `"shared_core"` means "dependency present, any version"
-- `{"id": "shared_core", "version": ">=1.2.0 <2.0.0"}` adds a version constraint
-
-Supported constraint styles:
-
-- exact: `1.2.3`
-- comparisons: `>=1.2.0`, `<=2.0.0`, `!=1.4.0`
-- combined comparisons: `>=1.2.0 <2.0.0`
-- bracket ranges: `[1.2.0,2.0.0)`, `[1.2.0,)`, `(,2.0.0]`
-- wildcards: `1.21.x`, `1.2.*`
-- alternatives: `1.2.x || 2.0.x`
+Install any required PyFish archives and loader mods alongside the archive. Manifest-level dependency resolution is not part of the current `pyfish.mod.json` format.
 
 The id accepts lowercase letters, numbers, underscores, dots, and dashes.
 `minecraft` and `pyfish` are reserved.

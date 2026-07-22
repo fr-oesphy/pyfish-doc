@@ -36,7 +36,6 @@ release or a pull request merge.
 
 ## Documentation
 
-- `README.md` matches the current public workflow.
-- `API_GUIDE.md` still points to the correct full documentation files.
-- `documentation/documentation.md` and `documentation/index.html` stay aligned.
+- `index.html` matches the current public workflow.
+- `index.html` and `documentation.md` stay aligned.
 - Template archives were regenerated if their source folders changed.

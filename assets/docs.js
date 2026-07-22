@@ -1068,6 +1068,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
 };
 
 const PYFISH_DOC_LOADER_KEY = "pyfish-doc-loader";
+const PYFISH_DOC_THEME_KEY = "pyfish-doc-theme";
 const PYFISH_DOC_VERSION_KEYS = {
     fabric: "pyfish-doc-version-fabric",
     neoforge: "pyfish-doc-version-neoforge"
@@ -1079,6 +1080,8 @@ const pyfishDocState = {
         neoforge: PYFISH_DOC_DEFAULT_PROFILE_ID
     }
 };
+let pyfishOutlineHeadings = [];
+let pyfishOutlineFrame = 0;
 
 function pyfishHydrateLoaderSwitches() {
     const template = document.getElementById("loaderSwitchTemplate");
@@ -1167,7 +1170,7 @@ function pyfishPopulateVersionSelects() {
         }
 
         select.innerHTML = PYFISH_DOC_VERSION_PROFILES.map((profile) =>
-            `<option value="${profile.id}" style="background:#f6efe6;color:#1a1410;">${profile.minecraftVersion}</option>`
+            `<option value="${profile.id}">${profile.minecraftVersion}</option>`
         ).join("");
     });
 
@@ -1454,6 +1457,10 @@ function pyfishApplyView(view, syncHash = false) {
         ? `PyFish Documentation - ${detail.title}`
         : `PyFish Documentation - ${PYFISH_DOC_VIEWS[resolvedView]}`;
 
+    pyfishUpdatePageChrome(resolvedView, detail);
+    document.body.classList.remove("sidebar-open");
+    document.querySelector("[data-sidebar-toggle]")?.setAttribute("aria-expanded", "false");
+
     if (syncHash) {
         const targetHash = detail ? `#detail-${detailId}` : `#${resolvedView}`;
         if (window.location.hash !== targetHash) {
@@ -1462,10 +1469,362 @@ function pyfishApplyView(view, syncHash = false) {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    pyfishScheduleOutlineSync();
+}
+
+function pyfishGetViewSection(view, detail) {
+    if (detail) {
+        return detail.parentLabel || "API Reference";
+    }
+    if (view.startsWith("api-") || view === "events" || view === "callback-objects") {
+        return "API Reference";
+    }
+    if (["template", "pyz-mods", "jar-mods"].includes(view)) {
+        return "Mod Formats";
+    }
+    if (["ide-support", "libraries"].includes(view)) {
+        return "Resources";
+    }
+    return "Get Started";
+}
+
+function pyfishUpdatePageChrome(view, detail) {
+    const title = detail ? detail.title : (PYFISH_DOC_VIEWS[view] || "Documentation");
+    const section = pyfishGetViewSection(view, detail);
+    const sectionElement = document.querySelector("[data-breadcrumb-section]");
+    const currentElement = document.querySelector("[data-breadcrumb-current]");
+
+    if (sectionElement) {
+        sectionElement.textContent = section;
+    }
+    if (currentElement) {
+        currentElement.textContent = title;
+    }
+
+    document.querySelectorAll(`[data-doc-view="${view}"] .hero-title h1`).forEach((heading) => {
+        heading.dataset.heroSection = section;
+    });
+
+    pyfishRenderOutline(view);
+}
+
+function pyfishRenderOutline(view) {
+    const outline = document.getElementById("pageOutline");
+    if (!outline) {
+        return;
+    }
+
+    const activeView = document.querySelector(`[data-doc-view="${view}"]`);
+    const headings = activeView
+        ? [...activeView.querySelectorAll(":scope > .section > h2")].slice(0, 7)
+        : [];
+
+    if (!headings.length) {
+        pyfishOutlineHeadings = [];
+        outline.innerHTML = '<span class="search-empty">No section headings on this page.</span>';
+        return;
+    }
+
+    outline.innerHTML = headings.map((heading, index) => {
+        const targetId = `outline-${view}-${index}`;
+        heading.id = targetId;
+        return `<button class="outline-link${index === 0 ? " active" : ""}" type="button" data-outline-target="${targetId}">${heading.textContent}</button>`;
+    }).join("");
+
+    pyfishOutlineHeadings = headings;
+    pyfishScheduleOutlineSync();
+}
+
+function pyfishSetActiveOutline(targetId) {
+    const links = [...document.querySelectorAll(".outline-link")];
+    const activeIndex = links.findIndex((link) => link.dataset.outlineTarget === targetId);
+
+    links.forEach((link, index) => {
+        link.classList.toggle("active", index === activeIndex);
+        link.classList.toggle("completed", activeIndex >= 0 && index <= activeIndex);
+    });
+
+    const outline = document.getElementById("pageOutline");
+    if (!outline || activeIndex < 0 || !links.length) {
+        return;
+    }
+
+    // The bar is snapped to the same bullet centers as the completed markers.
+    const outlineTop = outline.getBoundingClientRect().top;
+    const pointCenter = (link) => link.getBoundingClientRect().top - outlineTop + 13.5;
+    const firstCenter = pointCenter(links[0]);
+    const lastCenter = pointCenter(links.at(-1));
+    const activeCenter = pointCenter(links[activeIndex]);
+    const trackStart = Math.max(0, firstCenter - 12);
+
+    outline.style.setProperty("--outline-track-start", `${trackStart}px`);
+    outline.style.setProperty("--outline-track-height", `${Math.max(0, lastCenter - trackStart)}px`);
+    outline.style.setProperty("--outline-fill", `${Math.max(2, activeCenter - trackStart)}px`);
+}
+
+function pyfishSyncOutline() {
+    if (!pyfishOutlineHeadings.length) {
+        return;
+    }
+
+    const activationLine = 150;
+    let activeHeading = pyfishOutlineHeadings[0];
+    for (const heading of pyfishOutlineHeadings) {
+        if (heading.getBoundingClientRect().top <= activationLine) {
+            activeHeading = heading;
+        } else {
+            break;
+        }
+    }
+
+    // The final headings cannot always cross the activation line on short pages.
+    // Reaching the document end should still complete the whole outline.
+    const reachedPageEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+    if (reachedPageEnd) {
+        activeHeading = pyfishOutlineHeadings.at(-1);
+    }
+
+    pyfishSetActiveOutline(activeHeading.id);
+}
+
+function pyfishScheduleOutlineSync() {
+    if (pyfishOutlineFrame) {
+        return;
+    }
+
+    pyfishOutlineFrame = window.requestAnimationFrame(() => {
+        pyfishOutlineFrame = 0;
+        pyfishSyncOutline();
+    });
+}
+
+function pyfishInitOutlineTracking() {
+    window.addEventListener("scroll", pyfishScheduleOutlineSync, { passive: true });
+    window.addEventListener("resize", pyfishScheduleOutlineSync);
+}
+
+function pyfishEscapeHtml(value) {
+    return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function pyfishGuessCodeLanguage(code) {
+    const trimmed = code.trim();
+    if (trimmed.startsWith("{") || /^\s*"[\w-]+"\s*:/m.test(trimmed)) {
+        return "JSON";
+    }
+    if (/^(py\s+-\d|python\s+|pip\s+|cd\s+|\.minecraft\/)/m.test(trimmed)) {
+        return "Shell";
+    }
+    if (/^(from\s+\w+\s+import|import\s+\w+|def\s+\w+|class\s+\w+)/m.test(trimmed)) {
+        return "Python";
+    }
+    return "Text";
+}
+
+function pyfishHighlightCode(code, language) {
+    if (language === "Text") {
+        return pyfishEscapeHtml(code);
+    }
+
+    const tokenPattern = /#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:from|import|def|class|return|if|else|elif|for|while|in|not|and|or|is|None|True|False|try|except|with|as|lambda|pass|break|continue)\b|\b\d+(?:\.\d+)?\b/g;
+    let cursor = 0;
+    let html = "";
+
+    code.replace(tokenPattern, (token, offset) => {
+        html += pyfishEscapeHtml(code.slice(cursor, offset));
+        const afterToken = code.slice(offset + token.length);
+        let className = "tok-keyword";
+        if (token.startsWith("#")) {
+            className = "tok-comment";
+        } else if (token.startsWith('"') || token.startsWith("'")) {
+            className = language === "JSON" && afterToken.trimStart().startsWith(":")
+                ? "tok-property"
+                : "tok-string";
+        } else if (/^\d/.test(token)) {
+            className = "tok-number";
+        }
+        html += `<span class="${className}">${pyfishEscapeHtml(token)}</span>`;
+        cursor = offset + token.length;
+        return token;
+    });
+
+    return html + pyfishEscapeHtml(code.slice(cursor));
+}
+
+function pyfishEnhanceCodeBlocks() {
+    document.querySelectorAll(".code-shell").forEach((shell) => {
+        if (shell.dataset.codeEnhanced === "true") {
+            return;
+        }
+
+        const pre = shell.querySelector("pre");
+        if (!pre) {
+            return;
+        }
+
+        const source = pre.textContent;
+        const language = pyfishGuessCodeLanguage(source);
+        const toolbar = document.createElement("div");
+        toolbar.className = "code-toolbar";
+        toolbar.innerHTML = `<span class="code-language">${language}</span><button class="copy-code" type="button">Copy</button>`;
+        shell.prepend(toolbar);
+        pre.innerHTML = pyfishHighlightCode(source, language);
+        shell.dataset.codeEnhanced = "true";
+    });
+}
+
+function pyfishInitTheme() {
+    const savedTheme = localStorage.getItem(PYFISH_DOC_THEME_KEY);
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const initialTheme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+
+    const applyTheme = (theme) => {
+        document.body.dataset.theme = theme;
+        localStorage.setItem(PYFISH_DOC_THEME_KEY, theme);
+        document.querySelectorAll("[data-theme-label]").forEach((label) => {
+            label.textContent = theme === "dark" ? "Dark" : "Light";
+        });
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        if (themeColor) {
+            themeColor.content = theme === "dark" ? "#08172b" : "#f7faff";
+        }
+    };
+
+    applyTheme(initialTheme);
+    document.querySelectorAll("[data-theme-toggle]").forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+            applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
+        });
+    });
+}
+
+function pyfishGetSearchEntries() {
+    const views = Object.entries(PYFISH_DOC_VIEWS)
+        .filter(([view]) => view !== "api-detail")
+        .map(([view, label]) => {
+            const section = document.querySelector(`[data-doc-view="${view}"]`);
+            return {
+                target: view,
+                title: label,
+                category: pyfishGetViewSection(view),
+                text: section ? section.textContent.replace(/\s+/g, " ").trim() : ""
+            };
+        });
+    const details = Object.entries(PYFISH_DOC_DETAIL_PAGES).map(([id, detail]) => ({
+        target: `detail-${id}`,
+        title: detail.title,
+        category: detail.parentLabel || "API Reference",
+        text: `${detail.summary || ""} ${(detail.description || []).join(" ")}`
+    }));
+
+    return [...views, ...details];
+}
+
+function pyfishInitGlobalSearch() {
+    const input = document.getElementById("docSearch");
+    const results = document.getElementById("docSearchResults");
+    if (!input || !results) {
+        return;
+    }
+
+    const renderResults = () => {
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+            results.hidden = true;
+            results.innerHTML = "";
+            return;
+        }
+
+        const matches = pyfishGetSearchEntries()
+            .filter((entry) => `${entry.title} ${entry.category} ${entry.text}`.toLowerCase().includes(query))
+            .slice(0, 8);
+        results.hidden = false;
+        results.innerHTML = matches.length
+            ? matches.map((entry) => `<button class="search-result" type="button" data-search-target="${entry.target}"><strong>${pyfishEscapeHtml(entry.title)}</strong><span>${pyfishEscapeHtml(entry.category)}</span></button>`).join("")
+            : '<div class="search-empty">No matching guide or API entry.</div>';
+    };
+
+    input.addEventListener("input", renderResults);
+    input.addEventListener("focus", renderResults);
+    results.addEventListener("click", (event) => {
+        const result = event.target.closest("[data-search-target]");
+        if (!result) {
+            return;
+        }
+        pyfishApplyView(result.dataset.searchTarget, true);
+        input.value = "";
+        results.hidden = true;
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+            event.preventDefault();
+            input.focus();
+        }
+        if (event.key === "Escape" && document.activeElement === input) {
+            input.blur();
+            input.value = "";
+            results.hidden = true;
+        }
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!event.target.closest(".topbar-search")) {
+            results.hidden = true;
+        }
+    });
+}
+
+function pyfishInitSidebar() {
+    const toggle = document.querySelector("[data-sidebar-toggle]");
+    if (toggle) {
+        toggle.addEventListener("click", () => {
+            const open = document.body.classList.toggle("sidebar-open");
+            toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+    }
+
+    document.addEventListener("click", (event) => {
+        if (!document.body.classList.contains("sidebar-open")) {
+            return;
+        }
+        if (!event.target.closest("#docSidebar") && !event.target.closest("[data-sidebar-toggle]")) {
+            document.body.classList.remove("sidebar-open");
+            toggle?.setAttribute("aria-expanded", "false");
+        }
+    });
 }
 
 function pyfishInitNavigation() {
     document.addEventListener("click", (event) => {
+        const outlineLink = event.target.closest("[data-outline-target]");
+        if (outlineLink) {
+            const target = document.getElementById(outlineLink.dataset.outlineTarget);
+            target?.scrollIntoView({ behavior: "smooth", block: "start" });
+            pyfishSetActiveOutline(outlineLink.dataset.outlineTarget);
+            return;
+        }
+
+        const copyButton = event.target.closest(".copy-code");
+        if (copyButton) {
+            const source = copyButton.closest(".code-shell")?.querySelector("pre")?.textContent || "";
+            const copyOperation = navigator.clipboard?.writeText(source)
+                || Promise.reject(new Error("Clipboard API is unavailable"));
+            copyOperation.then(() => {
+                copyButton.textContent = "Copied";
+                window.setTimeout(() => { copyButton.textContent = "Copy"; }, 1200);
+            }).catch(() => {
+                copyButton.textContent = "Copy failed";
+                window.setTimeout(() => { copyButton.textContent = "Copy"; }, 1200);
+            });
+            return;
+        }
+
         const detailLink = event.target.closest("[data-detail-link]");
         if (detailLink) {
             event.preventDefault();
@@ -1496,6 +1855,8 @@ function pyfishInitNavigation() {
 document.addEventListener("DOMContentLoaded", () => {
     pyfishRefreshLoaderCounts();
     pyfishHydrateLoaderSwitches();
+    pyfishInitTheme();
+    pyfishEnhanceCodeBlocks();
     Object.keys(PYFISH_DOC_VERSION_KEYS).forEach((loader) => {
         const savedProfile = localStorage.getItem(PYFISH_DOC_VERSION_KEYS[loader]);
         if (savedProfile && PYFISH_DOC_VERSION_PROFILE_MAP[savedProfile]) {
@@ -1521,6 +1882,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     pyfishInitNavigation();
+    pyfishInitOutlineTracking();
+    pyfishInitGlobalSearch();
+    pyfishInitSidebar();
     pyfishInitFilters(initialLoader);
     pyfishApplyLoader(initialLoader);
     const requestedView = (window.location.hash || "").replace(/^#/, "");

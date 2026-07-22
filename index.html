@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#08172b">
     <title>PyFish Documentation - Welcome</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +19,7 @@
     <script src="assets/docs.js" defer></script>
 </head>
 
-<body data-loader-default="neoforge" data-default-view="overview">
+<body data-loader-default="neoforge" data-default-view="overview" data-theme="dark">
     <template id="loaderSwitchTemplate">
         <div class="loader-switch" aria-label="Documentation loader switch">
             <div class="loader-switch-label">Switch loader and target version</div>
@@ -56,8 +57,13 @@
         </div>
     </template>
 
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="Open documentation navigation"
+        aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
+
     <div class="layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="docSidebar">
             <div class="sidebar-brand">
                 <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
                     alt="PyFish logo">
@@ -100,9 +106,48 @@
                 <li><a href="#ide-support" data-nav-view="ide-support">IDE Support</a></li>
                 <li><a href="#libraries" data-nav-view="libraries">Native Libraries</a></li>
             </ul>
+
+            <div class="sidebar-footer">
+                <a class="sidebar-github" href="https://github.com/fr-oesphy/PyFish" target="_blank"
+                    rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+                <button class="sidebar-theme" type="button" data-theme-toggle>
+                    <span>Theme</span>
+                    <span class="theme-state" data-theme-label>Dark</span>
+                </button>
+            </div>
         </aside>
 
-        <main class="content">
+        <div class="workspace">
+            <header class="topbar">
+                <div class="topbar-search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
+                    <label class="sr-only" for="docSearch">Search the documentation</label>
+                    <input id="docSearch" type="search" placeholder="Search the docs..." autocomplete="off">
+                    <kbd>Ctrl K</kbd>
+                    <div class="search-results" id="docSearchResults" hidden></div>
+                </div>
+                <div class="topbar-actions">
+                    <a href="https://github.com/fr-oesphy/PyFish" target="_blank" rel="noopener">GitHub
+                        <span aria-hidden="true">&#8599;</span></a>
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
+                        <svg class="theme-toggle-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+                        <svg class="theme-toggle-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.1A8.5 8.5 0 0 1 8.9 3.5 8.5 8.5 0 1 0 20.5 15.1z"></path></svg>
+                    </button>
+                    <span class="topbar-version">MC <strong data-loader-field="versionLabel">1.21.1</strong></span>
+                </div>
+            </header>
+
+            <div class="document-canvas">
+                <main class="content" id="docContent">
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <a href="#overview" data-view-link="overview" aria-label="Documentation home">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>
+                        </a>
+                        <span aria-hidden="true">/</span>
+                        <span data-breadcrumb-section>Documentation</span>
+                        <span aria-hidden="true">/</span>
+                        <strong data-breadcrumb-current>Welcome</strong>
+                    </nav>
             <section class="doc-view active" data-doc-view="overview">
                 <header class="hero">
                     <div class="hero-brand">
@@ -1626,16 +1671,25 @@ python verify_install.py</pre>
                     <h2>What you need</h2>
                     <div class="stats-grid">
                         <article class="stat-card">
+                            <span class="stat-icon stat-icon-code" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14" /></svg>
+                            </span>
                             <div class="stat-label">Builder</div>
                             <div class="stat-value">Python 3.10+</div>
                             <p>No Gradle or Java development environment is required.</p>
                         </article>
                         <article class="stat-card">
+                            <span class="stat-icon stat-icon-archive" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5M9 13h6M9 17h6" /></svg>
+                            </span>
                             <div class="stat-label">Output</div>
                             <div class="stat-value">One .pyz file</div>
                             <p>The same archive can be installed with Fabric or NeoForge.</p>
                         </article>
                         <article class="stat-card">
+                            <span class="stat-icon stat-icon-folder" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+                            </span>
                             <div class="stat-label">Install location</div>
                             <div class="stat-value">mods/</div>
                             <p>Place it directly beside the normal PyFish JAR.</p>
@@ -1700,17 +1754,7 @@ python verify_install.py</pre>
   "description": "A Python-only Minecraft mod.",
   "authors": ["Your name"],
   "license": "MIT",
-  "homepage": "",
-  "dependencies": {
-    "pyz": [
-      {"id": "shared_core", "version": ">=1.2.0 &lt;2.0.0"},
-      {"id": "ui_pack", "version": "1.4.x || 1.5.x"}
-    ],
-    "jar": [
-      {"id": "fabric-api", "version": "[0.115.0,)"},
-      {"id": "another_mod", "version": "!=2.0.0"}
-    ]
-  }
+  "homepage": ""
 }</pre>
                     </div>
 
@@ -1725,8 +1769,7 @@ python verify_install.py</pre>
                             <strong>Optional</strong>
                             <span><span class="inline-code">description</span>,
                                 <span class="inline-code">authors</span>, <span class="inline-code">license</span>,
-                                <span class="inline-code">homepage</span>, and
-                                <span class="inline-code">dependencies</span></span>
+                                and <span class="inline-code">homepage</span></span>
                         </div>
                         <div class="meta-row">
                             <strong>Mod id rules</strong>
@@ -1848,11 +1891,10 @@ python build.py</pre>
                                 hash-based dependency cache.</p>
                         </article>
                         <article class="card">
-                            <div class="card-eyebrow">Manifest dependencies</div>
-                            <p>Use <span class="inline-code">dependencies.pyz</span> to wait for another PyFish
-                                namespace and <span class="inline-code">dependencies.jar</span> to require a normal
-                                Fabric or NeoForge mod id. A bare string means "any version", and object entries can
-                                declare exact versions, comparisons, ranges, wildcards, or alternatives.</p>
+                            <div class="card-eyebrow">Archive dependencies</div>
+                            <p>Install required PyFish archives and loader mods alongside your archive for now.
+                                Manifest-level dependency resolution is not part of the current <span
+                                    class="inline-code">pyfish.mod.json</span> format yet.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Internal packages</div>
@@ -2096,7 +2138,25 @@ blocks.register_block("ruby_block", {...})</pre>
             <footer class="footer">
                 Built for PyFish by Oesphy.
             </footer>
-        </main>
+                </main>
+
+                <aside class="page-rail" aria-label="Page navigation">
+                    <div class="page-outline">
+                        <p class="rail-label">On this page</p>
+                        <nav id="pageOutline"></nav>
+                    </div>
+                    <section class="rail-help">
+                        <p class="rail-label">Need help?</p>
+                        <p>Join the official PyFish Discord for help with your mod, scripts, or loader setup.</p>
+                        <a href="https://discord.com/invite/5JMGwWeDKQ" target="_blank" rel="noopener">Join the Discord <span aria-hidden="true">&#8599;</span></a>
+                    </section>
+                    <div class="rail-runtime">
+                        <span>Selected runtime</span>
+                        <strong><span data-loader-selected>NeoForge</span> <span data-loader-field="versionLabel">1.21.1</span></strong>
+                    </div>
+                </aside>
+            </div>
+        </div>
     </div>
 </body>
 
