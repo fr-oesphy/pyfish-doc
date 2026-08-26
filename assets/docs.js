@@ -1,4 +1,4 @@
-const PYFISH_DOC_MOD_VERSION = "1.2.0";
+const PYFISH_DOC_MOD_VERSION = "1.2.2";
 const PYFISH_DOC_FABRIC_LOADER_VERSION = "0.16.9";
 const PYFISH_DOC_DEFAULT_PROFILE_ID = "mc1211";
 
@@ -34,6 +34,17 @@ const PYFISH_DOC_VERSION_PROFILES = [
 const PYFISH_DOC_VERSION_PROFILE_MAP = Object.fromEntries(
     PYFISH_DOC_VERSION_PROFILES.map((profile) => [profile.id, profile])
 );
+
+const PYFISH_DOC_JAR_TEMPLATES = {
+    fabric: {
+        mc1211: "pyfish_jar_template_fabric_1.21.1.zip",
+        mc12111: "pyfish_jar_template_fabric_1.21.11.zip"
+    },
+    neoforge: {
+        mc1211: "pyfish_jar_template_neoforge_1.21.1.zip",
+        mc12111: "pyfish_jar_template_neoforge_1.21.11.zip"
+    }
+};
 
 const PYFISH_DOC_EVENTS = [
     { alias: "on_block_break", group: "block", side: "Server", access: "getPlayer(), getEntity(), getLevel(), getPos()", details: "Fires after a player breaks a block.", fabric: "PlayerBlockBreakEvents.AFTER", neoforge: "BlockEvent.BreakEvent" },
@@ -1119,6 +1130,7 @@ function pyfishSetLoaderProfileId(loader, profileId) {
 function pyfishBuildLoaderMeta(loader, profileId) {
     const base = PYFISH_DOC_LOADERS[loader] || PYFISH_DOC_LOADERS.neoforge;
     const profile = pyfishGetProfile(profileId);
+    const jarTemplateName = PYFISH_DOC_JAR_TEMPLATES[loader]?.[profile.id] || "";
     const jarName = loader === "fabric"
         ? `pyfish-fabric-${profile.minecraftVersion}-${PYFISH_DOC_MOD_VERSION}.jar`
         : `pyfish-neoforge-${profile.minecraftVersion}-${PYFISH_DOC_MOD_VERSION}.jar`;
@@ -1126,6 +1138,22 @@ function pyfishBuildLoaderMeta(loader, profileId) {
         ? PYFISH_DOC_FABRIC_LOADER_VERSION
         : profile.neoforgeVersion;
     const apiVersionLabel = loader === "fabric" ? profile.fabricApiVersion : "";
+    const jarTemplateProject = jarTemplateName.replace(/\.zip$/, "");
+    const jarTemplateMetadata = loader === "fabric" ? "fabric.mod.json" : "META-INF/neoforge.mods.toml";
+    const jarTemplateLayout = [
+        `${jarTemplateProject}/`,
+        "|-- gradle.properties",
+        "|-- build.gradle",
+        "|-- gradlew.bat",
+        "|-- gradlew",
+        "`-- src/main/resources/",
+        `    |-- ${jarTemplateMetadata}`,
+        "    |-- assets/ruby_tools/...",
+        "    |-- data/ruby_tools/...",
+        "    `-- pyfish/template_mod/",
+        "        |-- requirements.txt",
+        "        `-- scripts/main.py"
+    ].join("\n");
 
     return {
         ...base,
@@ -1134,6 +1162,13 @@ function pyfishBuildLoaderMeta(loader, profileId) {
         versionLabel: profile.minecraftVersion,
         loaderVersionLabel,
         apiVersionLabel,
+        jarTemplateName,
+        jarTemplateProject,
+        jarTemplateTarget: `${base.name} ${profile.minecraftVersion}`,
+        jarTemplateOutput: `template_mod-${loader}-${profile.minecraftVersion}-1.0.0.jar`,
+        jarTemplateMetadata,
+        jarTemplateLayout,
+        jarTemplateAvailable: Boolean(jarTemplateName),
         installLabel: loader === "fabric"
             ? `Fabric Loader ${loaderVersionLabel} + Fabric API ${apiVersionLabel}`
             : `NeoForge ${loaderVersionLabel}`,
@@ -1169,8 +1204,9 @@ function pyfishPopulateVersionSelects() {
             return;
         }
 
+        const jarGuideSelect = Boolean(select.closest('[data-doc-view="jar-mods"]'));
         select.innerHTML = PYFISH_DOC_VERSION_PROFILES.map((profile) =>
-            `<option value="${profile.id}">${profile.minecraftVersion}</option>`
+            `<option value="${profile.id}"${jarGuideSelect && !PYFISH_DOC_JAR_TEMPLATES[loader]?.[profile.id] ? " disabled" : ""}>${profile.minecraftVersion}</option>`
         ).join("");
     });
 
@@ -1223,6 +1259,21 @@ function pyfishApplyLoader(loader) {
     document.querySelectorAll("[data-loader-content]").forEach((element) => {
         const targets = (element.dataset.loaderContent || "").split(/\s+/).filter(Boolean);
         element.hidden = targets.length > 0 && !targets.includes(loader);
+    });
+
+    document.querySelectorAll("[data-jar-template-link]").forEach((link) => {
+        link.hidden = !meta.jarTemplateAvailable;
+        if (meta.jarTemplateAvailable) {
+            link.href = meta.jarTemplateName;
+            link.setAttribute("download", meta.jarTemplateName);
+        } else {
+            link.removeAttribute("href");
+            link.removeAttribute("download");
+        }
+    });
+
+    document.querySelectorAll("[data-jar-template-unavailable]").forEach((notice) => {
+        notice.hidden = meta.jarTemplateAvailable;
     });
 
     document.querySelectorAll("[data-loader-button]").forEach((button) => {

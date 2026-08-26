@@ -8,7 +8,7 @@ version selectors, searchable events, and detailed per-function pages.
 
 ## Supported Environments
 
-- PyFish version: `1.2.0`
+- PyFish version: `1.2.2`
 - Minecraft: `1.21.1` through `1.21.11`
 - Java: `21`
 - Loaders: Fabric and NeoForge
@@ -108,7 +108,7 @@ PyFish JAR.
 ```text
 .minecraft/
 |-- mods/
-|   |-- pyfish-neoforge-1.21.11-1.2.0.jar
+|   |-- pyfish-neoforge-1.21.11-1.2.2.jar
 |   `-- example_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
@@ -301,7 +301,7 @@ Move the generated archive beside PyFish:
 ```text
 .minecraft/
 `-- mods/
-    |-- pyfish-fabric-1.21.1-1.2.0.jar
+    |-- pyfish-fabric-1.21.1-1.2.2.jar
     `-- example_mod-1.0.0.pyz
 ```
 
@@ -354,21 +354,25 @@ Python with the same PyFish access as normal scripts.
 
 ### Native Fabric and NeoForge JAR mods
 
-Use the JAR template when the project must appear in the loader's mod list or
-when another mod needs to declare it as a dependency.
+Use a loader-specific JAR template when the project must appear in the loader's
+mod list or when another mod needs to declare it as a dependency:
 
-[Download the multi-loader JAR mod template](pyfish_mod_template.zip)
+- [Fabric 1.21.1 template](pyfish_jar_template_fabric_1.21.1.zip)
+- [NeoForge 1.21.1 template](pyfish_jar_template_neoforge_1.21.1.zip)
+- [Fabric 1.21.11 template](pyfish_jar_template_fabric_1.21.11.zip)
+- [NeoForge 1.21.11 template](pyfish_jar_template_neoforge_1.21.11.zip)
 
-The template does not require Java source code. It packages loader metadata and
-Python resources, then creates separate JARs.
+Each archive is already configured for one loader and one Minecraft version. It
+contains only that loader's metadata and produces one JAR without compiling
+Java or downloading a loader development environment.
 
-1. Edit `gradle.properties`.
-2. Choose a unique `mod_id`.
+1. Download and extract the template matching the target instance.
+2. Edit the mod identity fields at the top of `gradle.properties`.
 3. Rename `src/main/resources/pyfish/template_mod/` to
    `src/main/resources/pyfish/<mod_id>/`.
 4. Write scripts inside that folder's `scripts/` directory.
 5. Put static resources in `src/main/resources/assets/<mod_id>/...` and
-   `src/main/resources/data/<namespace>/...` as needed.
+   `src/main/resources/data/<mod_id>/...` as needed.
 6. Run:
 
 ```text
@@ -377,15 +381,15 @@ gradlew.bat build
 
 On Linux or macOS use `./gradlew build`.
 
-Outputs:
+Output:
 
 ```text
-build/libs/<mod_id>-fabric-<version>.jar
-build/libs/<mod_id>-neoforge-<version>.jar
+build/libs/<mod_id>-<loader>-<minecraft_version>-<mod_version>.jar
 ```
 
-Install only the JAR matching the user's loader. Scripts bundled this way
-automatically use the loader mod id as their content namespace.
+Install the generated JAR with the matching PyFish build. Fabric targets also
+require Fabric API. Scripts bundled this way automatically use the loader mod id
+as their content namespace.
 
 ## Getting Started
 

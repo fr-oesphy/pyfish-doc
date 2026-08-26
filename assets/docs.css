@@ -2073,6 +2073,11 @@ body[data-theme="dark"] .loader-version-select option {
     box-shadow: none;
 }
 
+[data-jar-template-link][hidden],
+[data-jar-template-unavailable][hidden] {
+    display: none;
+}
+
 .guide-action::before {
     margin-right: 9px;
     font-size: 1.05em;

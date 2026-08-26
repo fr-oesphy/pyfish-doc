@@ -175,7 +175,7 @@
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Installable jar</div>
-                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.0.jar
+                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.2.jar
                             </div>
                             <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
                                     rel="noopener">Download the selected version from Modrinth</a>.</p>
@@ -301,7 +301,7 @@
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Install this jar</div>
-                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.0.jar
+                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.2.jar
                             </div>
                             <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
                                     rel="noopener">Open the official download page</a>.</p>
@@ -326,7 +326,7 @@
                                     <span class="inline-code" data-loader-field="minecraftVersion" data-loader-source="fabric">1.21.1</span>.
                                 </li>
                                 <li>Install Fabric API <span class="inline-code" data-loader-field="apiVersionLabel" data-loader-source="fabric">0.116.12+1.21.1</span> for Minecraft <span class="inline-code" data-loader-field="minecraftVersion" data-loader-source="fabric">1.21.1</span>.</li>
-                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="fabric">pyfish-fabric-1.21.1-1.2.0.jar</span> into
+                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="fabric">pyfish-fabric-1.21.1-1.2.2.jar</span> into
                                     <span class="inline-code">mods/</span>.
                                 </li>
                             </ul>
@@ -337,7 +337,7 @@
                             <ul class="detail-list">
                                 <li>Install NeoForge <span class="inline-code" data-loader-field="loaderVersionLabel" data-loader-source="neoforge">21.1.215</span> for Minecraft <span
                                         class="inline-code" data-loader-field="minecraftVersion" data-loader-source="neoforge">1.21.1</span>.</li>
-                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="neoforge">pyfish-neoforge-1.21.1-1.2.0.jar</span> into <span
+                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="neoforge">pyfish-neoforge-1.21.1-1.2.2.jar</span> into <span
                                         class="inline-code">mods/</span>.</li>
                                 <li>Start the game once so the standard PyFish config folders are created.</li>
                             </ul>
@@ -443,7 +443,7 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                     <div class="code-shell">
                         <pre>.minecraft/
 |-- mods/
-|   |-- pyfish-neoforge-1.21.11-1.2.0.jar
+|   |-- pyfish-neoforge-1.21.11-1.2.2.jar
 |   `-- packaged_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
@@ -1616,7 +1616,10 @@ python verify_install.py</pre>
                             </ul>
                             <div class="guide-actions">
                                 <a class="guide-action" href="#jar-mods" data-view-link="jar-mods">Open the JAR guide</a>
-                                <a class="guide-action secondary" href="pyfish_mod_template.zip" download>Download template</a>
+                                <a class="guide-action secondary" href="pyfish_jar_template_neoforge_1.21.1.zip"
+                                    data-jar-template-link download>
+                                    Download <span data-loader-field="jarTemplateTarget">NeoForge 1.21.1</span> template
+                                </a>
                             </div>
                         </article>
                     </div>
@@ -1872,7 +1875,7 @@ python build.py</pre>
                                 <div class="code-shell">
                                     <pre>.minecraft/
 `-- mods/
-    |-- pyfish-fabric-1.21.1-1.2.0.jar
+    |-- pyfish-fabric-1.21.1-1.2.2.jar
     `-- example_pyz_mod-1.0.0.pyz</pre>
                                 </div>
                             </div>
@@ -1964,10 +1967,10 @@ python build.py</pre>
                         <img src="https://cdn.modrinth.com/data/bdP4b2gP/a01bf99421098f66b65ad2d4006a5337a18a58f0.png"
                             alt="PyFish logo">
                         <div class="hero-title">
-                            <h1>Build Fabric and NeoForge JAR Mods</h1>
+                            <h1>Build a <span data-loader-field="jarTemplateTarget">NeoForge 1.21.1</span> JAR Mod</h1>
                             <p class="hero-subtitle">
-                                Package Python scripts as normal loader mods. The template generates one Fabric JAR
-                                and one NeoForge JAR while keeping gameplay code in Python.
+                                Start from a project already configured for the selected loader and Minecraft version.
+                                It packages your Python scripts as one native loader JAR.
                             </p>
                         </div>
                     </div>
@@ -1975,58 +1978,63 @@ python build.py</pre>
                 </header>
 
                 <section class="section">
-                    <div class="section-eyebrow">Before you start</div>
-                    <h2>Use JAR only when loader metadata matters</h2>
+                    <div class="section-eyebrow">Selected target</div>
+                    <h2>One template, one compatible JAR</h2>
                     <div class="stats-grid">
                         <article class="stat-card">
+                            <div class="stat-label">Target</div>
+                            <div class="stat-value" data-loader-field="jarTemplateTarget">NeoForge 1.21.1</div>
+                            <p>The loader metadata and dependency ranges are already configured.</p>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-label">Output</div>
+                            <div class="stat-value">One JAR</div>
+                            <p>No unused metadata or second-loader artifact is generated.</p>
+                        </article>
+                        <article class="stat-card">
                             <div class="stat-label">Build tool</div>
-                            <div class="stat-value">Java 21 + Gradle wrapper</div>
-                            <p>The wrapper is included, so Gradle does not need to be installed separately.</p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">Outputs</div>
-                            <div class="stat-value">Two JARs</div>
-                            <p>One for Fabric and one for NeoForge.</p>
-                        </article>
-                        <article class="stat-card">
-                            <div class="stat-label">Python code</div>
-                            <div class="stat-value">Shared scripts</div>
-                            <p>The same scripts and namespace are packaged into both outputs.</p>
+                            <div class="stat-value">Java 21 + wrapper</div>
+                            <p>Gradle is included and no Java source code is required.</p>
                         </article>
                     </div>
                     <div class="guide-actions" style="margin-top: 24px;">
-                        <a class="guide-action" href="pyfish_mod_template.zip" download>Download pyfish_mod_template.zip</a>
+                        <a class="guide-action" href="pyfish_jar_template_neoforge_1.21.1.zip"
+                            data-jar-template-link download>
+                            Download <span data-loader-field="jarTemplateName">pyfish_jar_template_neoforge_1.21.1.zip</span>
+                        </a>
                         <a class="guide-action secondary" href="#template" data-view-link="template">Back to format choice</a>
+                    </div>
+                    <div class="decision-note" data-jar-template-unavailable hidden style="margin-top: 24px;">
+                        <h3>No template for this exact target</h3>
+                        <p>JAR templates are currently provided for Minecraft 1.21.1 and 1.21.11. Select one of those
+                            versions above instead of using a project with incompatible loader metadata.</p>
                     </div>
                 </section>
 
                 <section class="section">
+                    <div class="section-eyebrow">Format choice</div>
+                    <h2>Use JAR only when loader metadata matters</h2>
                     <div class="decision-note">
                         <h3>What changes compared with .pyz?</h3>
-                        <p>
-                            A JAR has native Fabric or NeoForge metadata and appears in the loader's mod list. This is
-                            useful for dependencies and conventional mod distribution, but users need the JAR matching
-                            their loader. If none of that matters, the <span class="inline-code">.pyz</span> format is
-                            simpler.
-                        </p>
+                        <p>A JAR appears as its own Fabric or NeoForge mod, has native dependency metadata, and can be
+                            declared as a dependency by other mods. A <span class="inline-code">.pyz</span> remains the
+                            simpler choice when one loader-neutral file is enough.</p>
                     </div>
                 </section>
 
                 <section class="section">
                     <div class="section-eyebrow">Project layout</div>
-                    <h2>Only one folder contains your gameplay code</h2>
-                    <p class="section-intro">
-                        Both loader JARs receive the same scripts. Fabric and NeoForge metadata are generated from the
-                        shared values in <span class="inline-code">gradle.properties</span>.
-                    </p>
+                    <h2>Only the selected loader metadata is included</h2>
+                    <p class="section-intro">The archive contains the metadata file required by
+                        <span data-loader-field="jarTemplateTarget">NeoForge 1.21.1</span>, plus one Python namespace.
+                        It does not contain a dormant configuration for the other loader.</p>
                     <div class="code-shell">
-                        <pre>pyfish_mod_template/
+                        <pre data-loader-field="jarTemplateLayout">pyfish_jar_template_neoforge_1.21.1/
 |-- gradle.properties
 |-- build.gradle
 |-- gradlew.bat
 |-- gradlew
 `-- src/main/resources/
-    |-- fabric.mod.json
     |-- META-INF/neoforge.mods.toml
     |-- assets/ruby_tools/...
     |-- data/ruby_tools/...
@@ -2038,48 +2046,47 @@ python build.py</pre>
 
                 <section class="section">
                     <div class="section-eyebrow">Configure and build</div>
-                    <h2>Four ordered steps</h2>
+                    <h2>Four steps to one loader JAR</h2>
                     <div class="guide-steps">
                         <article class="guide-step">
                             <div class="step-number">1</div>
                             <div>
-                                <h3>Edit gradle.properties</h3>
-                                <p>Set <span class="inline-code">mod_id</span>, name, version, authors, license, and
-                                    description. Use a unique lowercase mod id such as
-                                    <span class="inline-code">ruby_tools</span>.</p>
+                                <h3>Extract the selected archive</h3>
+                                <p>Open <span class="inline-code" data-loader-field="jarTemplateProject">pyfish_jar_template_neoforge_1.21.1</span>.
+                                    The loader and Minecraft target are already set.</p>
                             </div>
                         </article>
                         <article class="guide-step">
                             <div class="step-number">2</div>
                             <div>
-                                <h3>Rename the script namespace folder</h3>
-                                <p>Rename <span class="inline-code">src/main/resources/pyfish/template_mod/</span> to
-                                    <span class="inline-code">src/main/resources/pyfish/ruby_tools/</span>. The folder
-                                    name must exactly match <span class="inline-code">mod_id</span>.</p>
+                                <h3>Edit the mod identity</h3>
+                                <p>Set <span class="inline-code">mod_id</span>, name, mod version, authors, license,
+                                    and description at the top of <span class="inline-code">gradle.properties</span>.
+                                    Leave the target fields unchanged.</p>
                             </div>
                         </article>
                         <article class="guide-step">
                             <div class="step-number">3</div>
                             <div>
-                                <h3>Write Python scripts</h3>
-                                <p>Put scripts in the namespace folder's <span class="inline-code">scripts/</span>
-                                    directory. Add pure-Python packages to its
-                                    <span class="inline-code">requirements.txt</span> when needed, and put static
-                                    resources in <span class="inline-code">src/main/resources/assets/&lt;mod_id&gt;/...</span>
-                                    and <span class="inline-code">src/main/resources/data/&lt;namespace&gt;/...</span>.</p>
+                                <h3>Rename the namespace and write Python</h3>
+                                <p>Rename <span class="inline-code">pyfish/template_mod/</span> to match
+                                    <span class="inline-code">mod_id</span>, then put code in its
+                                    <span class="inline-code">scripts/</span> folder. Assets and data use the normal
+                                    <span class="inline-code">assets/&lt;mod_id&gt;/</span> and
+                                    <span class="inline-code">data/&lt;mod_id&gt;/</span> paths.</p>
                             </div>
                         </article>
                         <article class="guide-step">
                             <div class="step-number">4</div>
                             <div>
-                                <h3>Build both loaders</h3>
+                                <h3>Build the selected target</h3>
                                 <div class="code-shell">
                                     <pre>gradlew.bat build
 
 # Linux or macOS:
 ./gradlew build</pre>
                                 </div>
-                                <p style="margin-top: 14px;">The command creates both files in
+                                <p style="margin-top: 14px;">The wrapper creates one file in
                                     <span class="inline-code">build/libs/</span>.</p>
                             </div>
                         </article>
@@ -2087,22 +2094,22 @@ python build.py</pre>
                 </section>
 
                 <section class="section">
-                    <div class="section-eyebrow">Build results</div>
-                    <h2>Install only the matching loader JAR</h2>
+                    <div class="section-eyebrow">Build result</div>
+                    <h2>Install the generated JAR with the matching PyFish build</h2>
                     <div class="code-shell">
-                        <pre>build/libs/ruby_tools-fabric-1.0.0.jar
-build/libs/ruby_tools-neoforge-1.0.0.jar</pre>
+                        <pre data-loader-field="jarTemplateOutput">template_mod-neoforge-1.21.1-1.0.0.jar</pre>
                     </div>
-                    <div class="two-up" style="margin-top: 22px;">
-                        <article class="card">
-                            <div class="card-eyebrow">Fabric instance</div>
-                            <p>Install the <span class="inline-code">-fabric-</span> JAR, PyFish for Fabric, and
-                                Fabric API.</p>
-                        </article>
-                        <article class="card">
-                            <div class="card-eyebrow">NeoForge instance</div>
-                            <p>Install the <span class="inline-code">-neoforge-</span> JAR and PyFish for NeoForge.</p>
-                        </article>
+                    <div class="decision-note" data-loader-content="fabric" style="margin-top: 22px;">
+                        <p>Install the generated JAR with PyFish for Fabric
+                            <span data-loader-field="minecraftVersion" data-loader-source="fabric">1.21.1</span> and
+                            Fabric API <span class="inline-code" data-loader-field="apiVersionLabel"
+                                data-loader-source="fabric">0.116.12+1.21.1</span>.</p>
+                    </div>
+                    <div class="decision-note" data-loader-content="neoforge" style="margin-top: 22px;">
+                        <p>Install the generated JAR with PyFish for NeoForge
+                            <span data-loader-field="minecraftVersion" data-loader-source="neoforge">1.21.1</span> on
+                            NeoForge <span class="inline-code" data-loader-field="loaderVersionLabel"
+                                data-loader-source="neoforge">21.1.215</span>.</p>
                     </div>
                 </section>
 
@@ -2115,22 +2122,19 @@ build/libs/ruby_tools-neoforge-1.0.0.jar</pre>
 items.register_item("ruby", {...})
 blocks.register_block("ruby_block", {...})</pre>
                     </div>
-                    <p class="section-intro" style="margin-top: 20px;">
-                        With <span class="inline-code">mod_id=ruby_tools</span>, these become
+                    <p class="section-intro" style="margin-top: 20px;">With
+                        <span class="inline-code">mod_id=ruby_tools</span>, these registrations become
                         <span class="inline-code">ruby_tools:ruby</span> and
-                        <span class="inline-code">ruby_tools:ruby_block</span> on both loaders.
-                    </p>
+                        <span class="inline-code">ruby_tools:ruby_block</span>.</p>
                 </section>
 
                 <section class="section">
                     <div class="section-eyebrow">Installation side</div>
                     <h2>Custom content normally belongs on both sides</h2>
                     <div class="decision-note">
-                        <p>
-                            Install the matching JAR and PyFish on the server and every client when the mod registers
-                            items, blocks, creative tabs, textures, or other synchronized content. Pure server logic
-                            can remain server-only.
-                        </p>
+                        <p>Install the same generated JAR and matching PyFish build on the server and every client when
+                            the mod registers items, blocks, creative tabs, textures, or other synchronized content.
+                            Pure server logic can remain server-only.</p>
                     </div>
                 </section>
             </section>
