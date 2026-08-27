@@ -20,7 +20,7 @@ release or a pull request merge.
 
 - `requirements.txt` still installs pure-Python dependencies correctly.
 - `.pyz` manifest validation still rejects malformed metadata.
-- `dependencies.pyz` ordering still works as expected.
+- `pyfish.mod.json` does not advertise dependency resolution that the runtime does not provide.
 - Version constraints behave correctly for exact matches, ranges, and wildcards.
 
 ## Resources and content

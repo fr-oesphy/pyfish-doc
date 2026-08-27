@@ -8,7 +8,7 @@ version selectors, searchable events, and detailed per-function pages.
 
 ## Supported Environments
 
-- PyFish version: `1.2.2`
+- PyFish version: `1.2.4`
 - Minecraft: `1.21.1` through `1.21.11`
 - Java: `21`
 - Loaders: Fabric and NeoForge
@@ -108,7 +108,7 @@ PyFish JAR.
 ```text
 .minecraft/
 |-- mods/
-|   |-- pyfish-neoforge-1.21.11-1.2.2.jar
+|   |-- pyfish-neoforge-1.21.11-1.2.4.jar
 |   `-- example_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
@@ -123,7 +123,7 @@ PyFish JAR.
         |               `-- ruby.png
         |-- data/
         |   `-- my_modpack/
-        |       `-- recipes/
+        |       `-- recipe/
         |           `-- ruby.json
         `-- scripts/
             |-- init.py
@@ -136,7 +136,9 @@ Namespace rules:
 - `pyfish/<name>/scripts/*.py` uses `<name>` as its namespace, even when no
   installed loader mod has that id. This is useful for modpacks.
 - A `.pyz` mod uses the validated `id` from its `pyfish.mod.json`.
-- Scripts bundled in a normal Fabric or NeoForge mod JAR use that JAR's mod id.
+- Scripts bundled in a normal Fabric or NeoForge mod JAR use the directory name
+  in `src/main/resources/pyfish/<mod_id>/`. Keep it identical to the loader mod
+  id, as the templates require.
 
 For example, `items.register_item("ruby", {...})` inside
 `pyfish/my_pack/scripts/` registers `my_pack:ruby`.
@@ -150,6 +152,19 @@ Static Minecraft resources use the normal layout in every format:
 - external logical folders: `pyfish/<namespace>/assets/<namespace>/...` and `pyfish/<namespace>/data/<namespace>/...`
 - `.pyz` archives: `src/assets/<namespace>/...` and `src/data/<namespace>/...`
 - loader JAR mods: `src/main/resources/assets/<namespace>/...` and `src/main/resources/data/<namespace>/...`
+
+Minecraft resource identifiers are not filenames. For an item texture stored at
+`assets/my_pack/textures/item/ruby.png`, use `"texture": "item/ruby"` in a
+script from `my_pack`. Do not include `assets/`, `textures/`, or `.png`. A fully
+qualified reference such as `my_pack:item/ruby` is also valid.
+
+Unqualified creative-tab ids use the current script namespace. Use a short id
+only for a tab created by the same mod. Existing vanilla tabs must be fully
+qualified, for example `"tab": "minecraft:ingredients"` or
+`"tab": "minecraft:tools_and_utilities"`.
+
+Minecraft 1.21 uses singular data-pack directories such as `recipe/`,
+`loot_table/`, `advancement/`, `tags/item/`, and `tags/block/`.
 
 ## Creating PyFish Mods
 
@@ -195,7 +210,7 @@ src/
 |               `-- python_token.png
 |-- data/
 |   `-- example_mod/
-|       `-- recipes/
+|       `-- recipe/
 |           `-- python_token.json
 `-- example_mod/
     |-- __init__.py
@@ -301,7 +316,7 @@ Move the generated archive beside PyFish:
 ```text
 .minecraft/
 `-- mods/
-    |-- pyfish-fabric-1.21.1-1.2.2.jar
+    |-- pyfish-fabric-1.21.1-1.2.4.jar
     `-- example_mod-1.0.0.pyz
 ```
 
@@ -388,8 +403,9 @@ build/libs/<mod_id>-<loader>-<minecraft_version>-<mod_version>.jar
 ```
 
 Install the generated JAR with the matching PyFish build. Fabric targets also
-require Fabric API. Scripts bundled this way automatically use the loader mod id
-as their content namespace.
+require Fabric API. PyFish uses the directory name under
+`src/main/resources/pyfish/` as the content namespace, so it must stay identical
+to the loader mod id configured in the template.
 
 ## Getting Started
 
@@ -581,6 +597,11 @@ Items and foods commonly use:
 - `alwaysEdible`
 - `events`
 
+`texture` is a Minecraft texture id relative to the namespace's `textures/`
+folder. For `assets/my_pack/textures/item/signal_wand.png`, write
+`"texture": "item/signal_wand"`, without `.png`. For an existing vanilla tab,
+write its complete id such as `"tab": "minecraft:tools_and_utilities"`.
+
 Tools commonly use:
 
 - `damage`
@@ -630,8 +651,9 @@ def on_wand_use(level, player, hand):
     mc.send_message(player, "Dynamic item callback OK")
 
 items.register_item("signal_wand", {
-    "texture": "signal_wand",
+    "texture": "item/signal_wand",
     "stacksTo": 1,
+    "tab": "minecraft:tools_and_utilities",
     "events": {
         "use": on_wand_use
     }

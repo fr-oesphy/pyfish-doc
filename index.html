@@ -175,7 +175,7 @@
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Installable jar</div>
-                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.2.jar
+                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.4.jar
                             </div>
                             <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
                                     rel="noopener">Download the selected version from Modrinth</a>.</p>
@@ -301,7 +301,7 @@
                         </article>
                         <article class="stat-card">
                             <div class="stat-label">Install this jar</div>
-                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.2.jar
+                            <div class="stat-value" data-loader-field="jarName">pyfish-neoforge-1.21.1-1.2.4.jar
                             </div>
                             <p><a href="https://modrinth.com/mod/bdP4b2gP/versions" target="_blank"
                                     rel="noopener">Open the official download page</a>.</p>
@@ -326,7 +326,7 @@
                                     <span class="inline-code" data-loader-field="minecraftVersion" data-loader-source="fabric">1.21.1</span>.
                                 </li>
                                 <li>Install Fabric API <span class="inline-code" data-loader-field="apiVersionLabel" data-loader-source="fabric">0.116.12+1.21.1</span> for Minecraft <span class="inline-code" data-loader-field="minecraftVersion" data-loader-source="fabric">1.21.1</span>.</li>
-                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="fabric">pyfish-fabric-1.21.1-1.2.2.jar</span> into
+                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="fabric">pyfish-fabric-1.21.1-1.2.4.jar</span> into
                                     <span class="inline-code">mods/</span>.
                                 </li>
                             </ul>
@@ -337,7 +337,7 @@
                             <ul class="detail-list">
                                 <li>Install NeoForge <span class="inline-code" data-loader-field="loaderVersionLabel" data-loader-source="neoforge">21.1.215</span> for Minecraft <span
                                         class="inline-code" data-loader-field="minecraftVersion" data-loader-source="neoforge">1.21.1</span>.</li>
-                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="neoforge">pyfish-neoforge-1.21.1-1.2.2.jar</span> into <span
+                                <li>Copy <span class="inline-code" data-loader-field="jarName" data-loader-source="neoforge">pyfish-neoforge-1.21.1-1.2.4.jar</span> into <span
                                         class="inline-code">mods/</span>.</li>
                                 <li>Start the game once so the standard PyFish config folders are created.</li>
                             </ul>
@@ -443,7 +443,7 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                     <div class="code-shell">
                         <pre>.minecraft/
 |-- mods/
-|   |-- pyfish-neoforge-1.21.11-1.2.2.jar
+|   |-- pyfish-neoforge-1.21.11-1.2.4.jar
 |   `-- packaged_mod-1.0.0.pyz
 |-- config/
 `-- pyfish/
@@ -458,7 +458,7 @@ missingClientMessage=This server requires PyFish on the client.</pre>
         |               `-- ruby.png
         |-- data/
         |   `-- my_mod/
-        |       `-- recipes/
+        |       `-- recipe/
         |           `-- ruby.json
         `-- scripts/
             |-- init.py
@@ -486,6 +486,10 @@ missingClientMessage=This server requires PyFish on the client.</pre>
                             <p>Logical mods can also bundle normal Minecraft resources under
                                 <span class="inline-code">pyfish/&lt;mod_id&gt;/assets/&lt;namespace&gt;/...</span>
                                 and <span class="inline-code">pyfish/&lt;mod_id&gt;/data/&lt;namespace&gt;/...</span>.</p>
+                            <p>For <span class="inline-code">assets/my_mod/textures/item/ruby.png</span>, use the
+                                Python texture id <span class="inline-code">item/ruby</span>. Do not include
+                                <span class="inline-code">assets/</span>, <span class="inline-code">textures/</span>,
+                                or <span class="inline-code">.png</span>.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Dependencies</div>
@@ -920,8 +924,9 @@ mc.on("on_player_chat", on_player_chat)</pre>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Bundled real mods</div>
-                            <p>Scripts bundled inside a proper mod jar register content under that Java mod id, so a
-                                PyFish-powered mod stays inside its own namespace automatically.</p>
+                            <p>Scripts bundled inside a proper mod jar use the directory name under
+                                <span class="inline-code">src/main/resources/pyfish/</span> as their namespace. Keep
+                                that directory identical to the loader mod id configured by the template.</p>
                         </article>
                     </div>
                 </section>
@@ -935,10 +940,12 @@ mc.on("on_player_chat", on_player_chat)</pre>
                             <div class="card-eyebrow">Items and foods</div>
                             <ul class="detail-list">
                                 <li><span class="inline-code">texture</span> picks the generated model texture reference.</li>
+                                <li>Texture references are ids such as <span class="inline-code">item/ruby</span>, not filenames such as <span class="inline-code">ruby.png</span>.</li>
                                 <li><span class="inline-code">model</span> overrides the item model parent.</li>
                                 <li><span class="inline-code">stacksTo</span>, <span class="inline-code">fireResistant</span>, and <span class="inline-code">durability</span> are supported on items.</li>
                                 <li><span class="inline-code">alwaysEdible</span> is supported on foods.</li>
                                 <li><span class="inline-code">tab</span> attaches the entry to a generated or existing creative tab.</li>
+                                <li>Use a complete id for vanilla tabs, for example <span class="inline-code">minecraft:ingredients</span>. A short id refers to a tab in the current mod namespace.</li>
                                 <li><span class="inline-code">events</span> attaches Python callbacks directly to the dynamic item.</li>
                             </ul>
                         </article>
@@ -1007,7 +1014,7 @@ mc.on("on_player_chat", on_player_chat)</pre>
     mc.send_message(player, "Dynamic item callback OK")
 
 items.register_item("signal_wand", {
-    "texture": "signal_wand",
+    "texture": "item/signal_wand",
     "stacksTo": 1,
     "events": {
         "use": on_wand_use
@@ -1875,7 +1882,7 @@ python build.py</pre>
                                 <div class="code-shell">
                                     <pre>.minecraft/
 `-- mods/
-    |-- pyfish-fabric-1.21.1-1.2.2.jar
+    |-- pyfish-fabric-1.21.1-1.2.4.jar
     `-- example_pyz_mod-1.0.0.pyz</pre>
                                 </div>
                             </div>
@@ -1909,7 +1916,10 @@ python build.py</pre>
                             <div class="card-eyebrow">Bundled resources</div>
                             <p>Place static files in the archive with the normal Minecraft layout such as
                                 <span class="inline-code">assets/&lt;namespace&gt;/textures/...</span> and
-                                <span class="inline-code">data/&lt;namespace&gt;/recipes/...</span>.</p>
+                                <span class="inline-code">data/&lt;namespace&gt;/recipe/...</span>. Minecraft 1.21 also
+                                uses singular folders such as <span class="inline-code">loot_table/</span>,
+                                <span class="inline-code">advancement/</span>, <span class="inline-code">tags/item/</span>,
+                                and <span class="inline-code">tags/block/</span>.</p>
                         </article>
                         <article class="card">
                             <div class="card-eyebrow">Pure Python first</div>

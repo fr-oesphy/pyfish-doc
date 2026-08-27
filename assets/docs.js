@@ -1,4 +1,4 @@
-const PYFISH_DOC_MOD_VERSION = "1.2.2";
+const PYFISH_DOC_MOD_VERSION = "1.2.4";
 const PYFISH_DOC_FABRIC_LOADER_VERSION = "0.16.9";
 const PYFISH_DOC_DEFAULT_PROFILE_ID = "mc1211";
 
@@ -235,7 +235,8 @@ const PYFISH_DOC_DETAIL_PAGES = {
         useNote: "Use this for normal items with custom texture, tab, durability, and callbacks.",
         summary: "Registers a basic item in the active Python namespace and makes it available like any other item id.",
         description: [
-            "If the id has no explicit namespace, PyFish resolves it from the script context. Global scripts use the <span class=\"inline-code\">pyfish</span> namespace, logical Python mods use their folder name, and bundled real mods use their Java mod id.",
+            "If the id has no explicit namespace, PyFish resolves it from the script context. Global scripts use the <span class=\"inline-code\">pyfish</span> namespace, logical Python mods use their folder name, and JAR scripts use the directory name under <span class=\"inline-code\">src/main/resources/pyfish/</span>. The templates keep that directory identical to the loader mod id.",
+            "A texture property is a Minecraft resource id relative to <span class=\"inline-code\">assets/&lt;namespace&gt;/textures/</span>. For <span class=\"inline-code\">textures/item/signal_wand.png</span>, write <span class=\"inline-code\">item/signal_wand</span>, without <span class=\"inline-code\">.png</span>.",
             "This helper is part of the base <span class=\"inline-code\">pyfish</span> module on every maintained version profile."
         ],
         parameters: [
@@ -243,8 +244,9 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Dictionary of item properties such as <span class=\"inline-code\">texture</span>, <span class=\"inline-code\">stacksTo</span>, <span class=\"inline-code\">durability</span>, <span class=\"inline-code\">fireResistant</span>, <span class=\"inline-code\">tab</span>, and <span class=\"inline-code\">events</span>."]
         ],
         returns: "No return value. The item becomes available through its registry id after registration completes.",
-        example: `from pyfish import items\n\nitems.register_item("signal_wand", {\n    "texture": "signal_wand",\n    "stacksTo": 1,\n    "durability": 64,\n    "tab": "utility",\n})`,
+        example: `from pyfish import items\n\nitems.register_item("signal_wand", {\n    "texture": "item/signal_wand",\n    "stacksTo": 1,\n    "durability": 64,\n    "tab": "minecraft:tools_and_utilities",\n})`,
         notes: [
+            "Existing vanilla tabs require their full id, such as <span class=\"inline-code\">minecraft:ingredients</span>. A short tab id points into the current mod namespace.",
             "If you only need a consumable item, prefer <span class=\"inline-code\">items.register_food(...)</span> so the food values are documented explicitly.",
             "Dynamic item callbacks still live under the <span class=\"inline-code\">events</span> property, not under the global <span class=\"inline-code\">mc.on(...)</span> alias list."
         ],
@@ -271,7 +273,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Additional item properties such as texture, tab, or food callbacks like <span class=\"inline-code\">eat</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import items\n\nitems.register_food("ruby_snack", 5, 0.8, {\n    "texture": "ruby_snack",\n    "alwaysEdible": True,\n    "tab": "ruby_tab",\n})`,
+        example: `from pyfish import items\n\nitems.register_food("ruby_snack", 5, 0.8, {\n    "texture": "item/ruby_snack",\n    "alwaysEdible": True,\n    "tab": "ruby_tab",\n})`,
         notes: [
             "Food callbacks still belong in the <span class=\"inline-code\">events</span> object when you want an <span class=\"inline-code\">eat</span> hook.",
             "Use a bare id when you want the content to stay inside the current script namespace automatically."
@@ -298,7 +300,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Tier and item configuration, commonly including <span class=\"inline-code\">durability</span>, <span class=\"inline-code\">damage</span>, <span class=\"inline-code\">attackSpeed</span>, <span class=\"inline-code\">speed</span>, <span class=\"inline-code\">repairItem</span>, and <span class=\"inline-code\">texture</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import items\n\nitems.register_tool("ruby_multitool", "multitool", {\n    "texture": "ruby_multitool",\n    "durability": 640,\n    "damage": 5,\n    "attackSpeed": -2.2,\n    "speed": 8.5,\n    "damageBonus": 3.0,\n    "repairItem": "minecraft:iron_ingot",\n})`,
+        example: `from pyfish import items\n\nitems.register_tool("ruby_multitool", "multitool", {\n    "texture": "item/ruby_multitool",\n    "durability": 640,\n    "damage": 5,\n    "attackSpeed": -2.2,\n    "speed": 8.5,\n    "damageBonus": 3.0,\n    "repairItem": "minecraft:iron_ingot",\n})`,
         notes: [
             "PyFish also assigns the relevant vanilla tool tags automatically for supported tool classes.",
             "When you only need a cosmetic or utility item, <span class=\"inline-code\">items.register_item(...)</span> is simpler."
@@ -324,7 +326,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["properties", "Dictionary with block data such as <span class=\"inline-code\">texture</span>, <span class=\"inline-code\">destroyTime</span>, <span class=\"inline-code\">explosionResistance</span>, <span class=\"inline-code\">requiresCorrectToolForDrops</span>, <span class=\"inline-code\">tab</span>, and <span class=\"inline-code\">events</span>."]
         ],
         returns: "No return value.",
-        example: `from pyfish import blocks\n\nblocks.register_block("ruby_block", {\n    "texture": {\n        "top": "ruby_block_top",\n        "bottom": "ruby_block_bottom",\n        "side": "ruby_block_side"\n    },\n    "destroyTime": 3.0,\n    "explosionResistance": 6.0,\n    "requiresCorrectToolForDrops": True,\n    "tab": "ruby_tab",\n})`,
+        example: `from pyfish import blocks\n\nblocks.register_block("ruby_block", {\n    "texture": {\n        "top": "block/ruby_block_top",\n        "bottom": "block/ruby_block_bottom",\n        "side": "block/ruby_block_side"\n    },\n    "destroyTime": 3.0,\n    "explosionResistance": 6.0,\n    "requiresCorrectToolForDrops": True,\n    "tab": "ruby_tab",\n})`,
         notes: [
             "Registering a block also registers the matching block item automatically.",
             "If you want an interaction callback on the block itself, add a <span class=\"inline-code\">use</span> function inside the <span class=\"inline-code\">events</span> object."
@@ -397,6 +399,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         summary: "Registers texture data from Python so dynamic items and blocks can point at textures that are generated or transformed while the runtime is starting.",
         description: [
             "The byte-based path is the simplest when you already have encoded image bytes. The image-based path is useful when a Java-side image object is easier to produce or manipulate.",
+            "Use a resource id such as <span class=\"inline-code\">block/ruby_block_side</span>. Do not include <span class=\"inline-code\">assets/</span>, <span class=\"inline-code\">textures/</span>, or the <span class=\"inline-code\">.png</span> extension.",
             "The runtime also exposes <span class=\"inline-code\">textures.get_texture_bytes(...)</span> and <span class=\"inline-code\">textures.load_texture(...)</span> for more advanced flows."
         ],
         parameters: [
@@ -404,7 +407,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["bytes / image", "Either encoded byte content or a Java image object, depending on the helper you choose."]
         ],
         returns: "No return value.",
-        example: `from pyfish import textures\n\nwith open("generated_logo.png", "rb") as handle:\n    textures.register_texture("ruby_block_side", handle.read())`,
+        example: `from pyfish import textures\n\nwith open("generated_logo.png", "rb") as handle:\n    textures.register_texture("block/ruby_block_side", handle.read())`,
         notes: [
             "Texture registration is most useful when the content API is also generating items or blocks that refer to those texture ids.",
             "If the texture is already a normal static asset in a jar or resource pack, use the normal resource path instead of runtime registration."
@@ -433,6 +436,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
         example: `from pyfish import tabs\n\ntabs.create("ruby_tab", {\n    "displayName": "Ruby Tools",\n    "icon": "ruby_tools:ruby_ingot"\n})`,
         notes: [
             "Use <span class=\"inline-code\">displayName</span>, not <span class=\"inline-code\">title</span>.",
+            "To target a vanilla tab from an item or block, use its complete id such as <span class=\"inline-code\">minecraft:tools_and_utilities</span>; do not create that tab again.",
             "Generated items and blocks can then point to that tab through their own <span class=\"inline-code\">tab</span> property."
         ],
         related: ["content-register-item", "content-register-block"]
@@ -456,7 +460,7 @@ const PYFISH_DOC_DETAIL_PAGES = {
             ["callback", "Python function that receives the content interaction objects for that specific callback type."]
         ],
         returns: "No return value. The callbacks are invoked later when the content is used in game.",
-        example: `from pyfish import items, mc\n\ndef on_wand_use(level, player, hand):\n    mc.send_message(player, "Dynamic item callback OK")\n\nitems.register_item("signal_wand", {\n    "texture": "signal_wand",\n    "stacksTo": 1,\n    "events": {\n        "use": on_wand_use\n    }\n})`,
+        example: `from pyfish import items, mc\n\ndef on_wand_use(level, player, hand):\n    mc.send_message(player, "Dynamic item callback OK")\n\nitems.register_item("signal_wand", {\n    "texture": "item/signal_wand",\n    "stacksTo": 1,\n    "events": {\n        "use": on_wand_use\n    }\n})`,
         notes: [
             "These callbacks receive the raw interaction objects for the specific content event, not the shared global event wrappers.",
             "Use this model when the logic clearly belongs to one generated content entry."
